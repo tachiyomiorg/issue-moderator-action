@@ -330,7 +330,11 @@ const ALLOWED_ACTIONS = ['created'];
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { actor, payload, repo } = github.context;
+            const { actor, eventName, repo } = github.context;
+            if (eventName !== 'issue_comment') {
+                return;
+            }
+            const payload = github.context.payload;
             // Do nothing if it's wasn't a relevant action or it's not an issue comment.
             if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.comment) {
                 core.info('Irrelevant action trigger');
@@ -406,6 +410,7 @@ function duplicateIssue(client) {
         }
     });
 }
+run();
 
 
 /***/ }),

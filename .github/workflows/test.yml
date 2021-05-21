@@ -3,7 +3,7 @@ on:
   issue_comment:
     types: [created]
 jobs:
-  autoclose:
+  moderate:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repo

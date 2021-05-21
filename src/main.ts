@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { GitHub } from '@actions/github/lib/utils';
+import { IssueCommentEvent } from '@octokit/webhooks-definitions/schema';
 
 type GitHubClient = InstanceType<typeof GitHub>
 type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam'
@@ -14,7 +15,13 @@ const ALLOWED_ACTIONS = ['created'];
 
 async function run() {
   try {
-    const { actor, payload, repo } = github.context;
+    const { actor, eventName, repo } = github.context;
+
+    if (eventName !== 'issue_comment') {
+      return;
+    }
+
+    const payload = github.context.payload as IssueCommentEvent
 
     // Do nothing if it's wasn't a relevant action or it's not an issue comment.
     if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.comment) {
@@ -103,3 +110,5 @@ async function duplicateIssue(client: GitHubClient) {
     core.info(`Issue #${issue.number} closed`);
   }
 }
+
+run();
