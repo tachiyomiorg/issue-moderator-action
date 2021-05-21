@@ -332,7 +332,7 @@ function run() {
         try {
             const { actor, payload, repo } = github.context;
             // Do nothing if it's wasn't a relevant action or it's not an issue comment.
-            if (ALLOWED_ACTIONS.indexOf(payload.action) !== -1 || !payload.comment || !payload.issue) {
+            if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.comment || !payload.issue) {
                 return;
             }
             if (!payload.sender) {
