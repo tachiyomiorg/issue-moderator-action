@@ -360,8 +360,6 @@ function run() {
                     core.info('Failed to fetch the members from the organization');
                     return;
                 }
-                core.info(`Members count: ${allowedMembers.data.length.toString()}`);
-                core.info('Members: ' + allowedMembers.data.map(m => m.login.substring(0, 2)).join(', '));
                 if (allowedMembers.data.find(member => member.login === commentUser.login)) {
                     yield COMMANDS[commandToRun](client);
                 }
