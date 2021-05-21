@@ -3,6 +3,7 @@ import * as github from '@actions/github';
 import { GitHub } from '@actions/github/lib/utils';
 
 type GitHubClient = InstanceType<typeof GitHub>
+type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam'
 
 const COMMANDS: Record<string, (client: GitHubClient) => Promise<void>> = {
   'lock': lockIssue,
@@ -59,11 +60,17 @@ async function run() {
 
 async function lockIssue(client: GitHubClient) {
   const { payload, repo } = github.context;
+  const commentBody: string = payload.comment.body;
+
+  const lockReasons = ['off-topic', 'too heated', 'resolved', 'spam'];
+
+  const reason = lockReasons.find(option => commentBody.includes(option));
 
   await client.rest.issues.lock({
     owner: repo.owner,
     repo: repo.repo,
-    issue_number: payload.issue.number
+    issue_number: payload.issue.number,
+    lock_reason: reason ? reason as LockReason : undefined
   });
 
   core.info(`Issue #${payload.issue.number} locked`);
