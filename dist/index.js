@@ -370,11 +370,13 @@ function lockIssue(client) {
         const { payload, repo } = github.context;
         const commentBody = payload.comment.body;
         const lockReasons = ['off-topic', 'too heated', 'resolved', 'spam'];
+        // Find the first reason present on the comment body text.
         const reason = lockReasons.find(option => commentBody.includes(option));
         yield client.rest.issues.lock({
             owner: repo.owner,
             repo: repo.repo,
             issue_number: payload.issue.number,
+            // Ternary operator to deal with type issues.
             lock_reason: reason ? reason : undefined
         });
         core.info(`Issue #${payload.issue.number} locked`);
