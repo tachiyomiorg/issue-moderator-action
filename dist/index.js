@@ -332,7 +332,8 @@ function run() {
         try {
             const { actor, payload, repo } = github.context;
             // Do nothing if it's wasn't a relevant action or it's not an issue comment.
-            if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.comment || !payload.issue) {
+            if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.comment) {
+                core.info('Irrelevant action trigger');
                 return;
             }
             if (!payload.sender) {
@@ -359,6 +360,9 @@ function run() {
                     yield COMMANDS[commandToRun](client);
                 }
             }
+            else {
+                core.info('No commands found on the comment');
+            }
         }
         catch (error) {
             core.setFailed(error.message);
@@ -367,7 +371,7 @@ function run() {
 }
 function lockIssue(client) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { payload, repo } = github.context;
+        const { issue, payload, repo } = github.context;
         const commentBody = payload.comment.body;
         const lockReasons = ['off-topic', 'too heated', 'resolved', 'spam'];
         // Find the first reason present on the comment body text.
@@ -375,7 +379,7 @@ function lockIssue(client) {
         yield client.rest.issues.lock({
             owner: repo.owner,
             repo: repo.repo,
-            issue_number: payload.issue.number,
+            issue_number: issue.number,
             // Ternary operator to deal with type issues.
             lock_reason: reason ? reason : undefined
         });
@@ -384,7 +388,7 @@ function lockIssue(client) {
 }
 function duplicateIssue(client) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { issue, payload, repo } = github.context;
+        const { issue, repo } = github.context;
         const issueMetadata = {
             owner: issue.owner,
             repo: issue.repo,
@@ -393,12 +397,12 @@ function duplicateIssue(client) {
         const issueData = yield client.rest.issues.get(issueMetadata);
         if (issueData.data.state === 'open') {
             yield client.rest.issues.update({
-                owner: payload.issue.owner,
-                repo: payload.issue.repo,
-                issue_number: payload.issue.number,
+                owner: repo.owner,
+                repo: repo.repo,
+                issue_number: issue.number,
                 state: 'closed'
             });
-            core.info(`Issue #${payload.issue.number} closed`);
+            core.info(`Issue #${issue.number} closed`);
         }
     });
 }

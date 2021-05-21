@@ -17,7 +17,8 @@ async function run() {
     const { actor, payload, repo } = github.context;
 
     // Do nothing if it's wasn't a relevant action or it's not an issue comment.
-    if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.comment || !payload.issue) {
+    if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.comment) {
+      core.info('Irrelevant action trigger');
       return;
     }
     if (!payload.sender) {
@@ -52,14 +53,16 @@ async function run() {
       if (allowedMembers.data.find(member => member.login === actor)) {
         await COMMANDS[commandToRun](client);
       }  
-    } 
+    } else {
+      core.info('No commands found on the comment');
+    }
   } catch (error) {
     core.setFailed(error.message);
   }
 }
 
 async function lockIssue(client: GitHubClient) {
-  const { payload, repo } = github.context;
+  const { issue, payload, repo } = github.context;
   const commentBody: string = payload.comment.body;
 
   const lockReasons = ['off-topic', 'too heated', 'resolved', 'spam'];
@@ -70,7 +73,7 @@ async function lockIssue(client: GitHubClient) {
   await client.rest.issues.lock({
     owner: repo.owner,
     repo: repo.repo,
-    issue_number: payload.issue.number,
+    issue_number: issue.number,
     // Ternary operator to deal with type issues.
     lock_reason: reason ? reason as LockReason : undefined
   });
@@ -79,7 +82,7 @@ async function lockIssue(client: GitHubClient) {
 }
 
 async function duplicateIssue(client: GitHubClient) {
-  const { issue, payload, repo } = github.context;
+  const { issue, repo } = github.context;
 
   const issueMetadata = {
     owner: issue.owner,
@@ -91,12 +94,12 @@ async function duplicateIssue(client: GitHubClient) {
 
   if (issueData.data.state === 'open') {
     await client.rest.issues.update({
-      owner: payload.issue.owner,
-      repo: payload.issue.repo,
-      issue_number: payload.issue.number,
+      owner: repo.owner,
+      repo: repo.repo,
+      issue_number: issue.number,
       state: 'closed'
     });
 
-    core.info(`Issue #${payload.issue.number} closed`);
+    core.info(`Issue #${issue.number} closed`);
   }
 }
