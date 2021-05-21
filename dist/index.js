@@ -343,7 +343,7 @@ function run() {
             if (!payload.sender) {
                 throw new Error('Internal error, no sender provided by GitHub');
             }
-            const commentBody = payload.comment.body;
+            const { body: commentBody, user: commentUser } = payload.comment;
             // Find the command used.
             const commandToRun = Object.keys(COMMANDS)
                 .find(key => {
@@ -360,8 +360,11 @@ function run() {
                     core.info('Failed to fetch the members from the organization');
                     return;
                 }
-                if (allowedMembers.data.find(member => member.login === actor)) {
+                if (allowedMembers.data.find(member => member.login === commentUser.login)) {
                     yield COMMANDS[commandToRun](client);
+                }
+                else {
+                    core.info('The comment author is not a organization member');
                 }
             }
             else {

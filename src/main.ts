@@ -15,7 +15,7 @@ const ALLOWED_ACTIONS = ['created'];
 
 async function run() {
   try {
-    const { actor, eventName, repo } = github.context;
+    const { eventName, repo } = github.context;
 
     if (eventName !== 'issue_comment') {
       return;
@@ -32,7 +32,7 @@ async function run() {
       throw new Error('Internal error, no sender provided by GitHub');
     }
 
-    const commentBody: string = payload.comment.body;
+    const { body: commentBody, user: commentUser } = payload.comment;
 
     // Find the command used.
     const commandToRun = Object.keys(COMMANDS)
@@ -57,9 +57,11 @@ async function run() {
         return;
       }
 
-      if (allowedMembers.data.find(member => member.login === actor)) {
+      if (allowedMembers.data.find(member => member.login === commentUser.login)) {
         await COMMANDS[commandToRun](client);
-      }  
+      } else {
+        core.info('The comment author is not a organization member');
+      }
     } else {
       core.info('No commands found on the comment');
     }
