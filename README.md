@@ -24,9 +24,8 @@ jobs:
 
 ## Inputs
 
-| Name | Description |
-| ---- | ----------- |
-| `repo-token` | GitHub token |
-| `lock-command` | Optional lock command text. |
-| `duplicate-command` | Optional duplicate command text. |
-
+| Name | Description | Default value |
+| ---- | ----------- | ------------- |
+| `repo-token` | GitHub token |  |
+| `lock-command` | Optional lock command text. | Lock this issue |
+| `duplicate-command` | Optional duplicate command text. | Duplicate of # |
