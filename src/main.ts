@@ -57,8 +57,8 @@ async function run() {
         return;
       }
 
-      core.debug(`Members count: ${allowedMembers.data.length.toString()}`);
-      core.debug('Members: ' + allowedMembers.data.map(m => m.login.substring(0, 2)).join(', '));
+      core.info(`Members count: ${allowedMembers.data.length.toString()}`);
+      core.info('Members: ' + allowedMembers.data.map(m => m.login.substring(0, 2)).join(', '));
 
       if (allowedMembers.data.find(member => member.login === commentUser.login)) {
         await COMMANDS[commandToRun](client);
