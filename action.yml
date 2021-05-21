@@ -1,0 +1,21 @@
+name: Issue moderator with commands
+description: Automatically close or lock issues based on commands.
+author: tachiyomiorg
+branding:
+  icon: alert-circle
+  color: red
+inputs:
+  repo-token:
+    required: true
+    description: GitHub token
+  lock-command:
+    required: false
+    default: Lock this issue
+    description: Command to lock an issue
+  duplicate-command:
+    required: false
+    default: "Duplicate of #"
+    description: Command to close a duplicate issue
+runs:
+  using: node12
+  main: dist/index.js
