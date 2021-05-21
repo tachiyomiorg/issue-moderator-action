@@ -345,6 +345,7 @@ function run() {
                 return commentBody.startsWith(core.getInput(`${key}-command`));
             });
             if (commandToRun) {
+                core.info(`Command found: ${commandToRun}`);
                 const client = github.getOctokit(core.getInput('repo-token', { required: true }));
                 // Get all the members from the organization.
                 const allowedMembers = yield client.rest.orgs.listMembers({
@@ -372,17 +373,27 @@ function lockIssue(client) {
             repo: repo.repo,
             issue_number: payload.issue.number
         });
+        core.info(`Issue #${payload.issue.number} locked`);
     });
 }
 function duplicateIssue(client) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { payload } = github.context;
-        yield client.rest.issues.update({
-            owner: payload.issue.owner,
-            repo: payload.issue.repo,
-            issue_number: payload.issue.number,
-            state: 'closed'
-        });
+        const { issue, payload, repo } = github.context;
+        const issueMetadata = {
+            owner: issue.owner,
+            repo: issue.repo,
+            issue_number: issue.number
+        };
+        const issueData = yield client.rest.issues.get(issueMetadata);
+        if (issueData.data.state === 'open') {
+            yield client.rest.issues.update({
+                owner: payload.issue.owner,
+                repo: payload.issue.repo,
+                issue_number: payload.issue.number,
+                state: 'closed'
+            });
+            core.info(`Issue #${payload.issue.number} closed`);
+        }
     });
 }
 

@@ -32,6 +32,8 @@ async function run() {
       });
 
     if (commandToRun) {
+      core.info(`Command found: ${commandToRun}`);
+
       const client = github.getOctokit(
         core.getInput('repo-token', {required: true})
       );
@@ -63,15 +65,29 @@ async function lockIssue(client: GitHubClient) {
     repo: repo.repo,
     issue_number: payload.issue.number
   });
+
+  core.info(`Issue #${payload.issue.number} locked`);
 }
 
 async function duplicateIssue(client: GitHubClient) {
-  const { payload } = github.context;
+  const { issue, payload, repo } = github.context;
 
-  await client.rest.issues.update({
-    owner: payload.issue.owner,
-    repo: payload.issue.repo,
-    issue_number: payload.issue.number,
-    state: 'closed'
-  });
+  const issueMetadata = {
+    owner: issue.owner,
+    repo: issue.repo,
+    issue_number: issue.number
+  };
+
+  const issueData = await client.rest.issues.get(issueMetadata);
+
+  if (issueData.data.state === 'open') {
+    await client.rest.issues.update({
+      owner: payload.issue.owner,
+      repo: payload.issue.repo,
+      issue_number: payload.issue.number,
+      state: 'closed'
+    });
+
+    core.info(`Issue #${payload.issue.number} closed`);
+  }
 }
