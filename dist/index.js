@@ -330,7 +330,7 @@ const ALLOWED_ACTIONS = ['created'];
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { actor, eventName, repo } = github.context;
+            const { eventName, repo } = github.context;
             if (eventName !== 'issue_comment') {
                 return;
             }
@@ -360,6 +360,8 @@ function run() {
                     core.info('Failed to fetch the members from the organization');
                     return;
                 }
+                core.debug(`Members count: ${allowedMembers.data.length.toString()}`);
+                core.debug('Members: ' + allowedMembers.data.map(m => m.login.substring(0, 2)).join(', '));
                 if (allowedMembers.data.find(member => member.login === commentUser.login)) {
                     yield COMMANDS[commandToRun](client);
                 }
