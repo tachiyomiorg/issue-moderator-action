@@ -1,0 +1,16 @@
+name: Issue moderator test
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  autoclose:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v1
+    
+    - name: Moderate the issue
+      # uses: tachiyomiorg/issue-moderator-action@v1.0
+      uses: ./
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}

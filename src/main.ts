@@ -1,0 +1,77 @@
+import * as core from '@actions/core';
+import * as github from '@actions/github';
+import { GitHub } from '@actions/github/lib/utils';
+
+type GitHubClient = InstanceType<typeof GitHub>
+
+const COMMANDS: Record<string, (client: GitHubClient) => Promise<void>> = {
+  'lock': lockIssue,
+  'duplicate': duplicateIssue
+}
+
+const ALLOWED_ACTIONS = ['created'];
+
+async function run() {
+  try {
+    const { actor, payload, repo } = github.context;
+
+    // Do nothing if it's wasn't a relevant action or it's not an issue comment.
+    if (ALLOWED_ACTIONS.indexOf(payload.action) !== -1 || !payload.comment || !payload.issue) {
+      return;
+    }
+    if (!payload.sender) {
+      throw new Error('Internal error, no sender provided by GitHub');
+    }
+
+    const commentBody: string = payload.comment.body;
+
+    // Find the command used.
+    const commandToRun = Object.keys(COMMANDS)
+      .find(key => {
+        return commentBody.startsWith(core.getInput(`${key}-command`));
+      });
+
+    if (commandToRun) {
+      const client = github.getOctokit(
+        core.getInput('repo-token', {required: true})
+      );
+
+      // Get all the members from the organization.
+      const allowedMembers = await client.rest.orgs.listMembers({
+        org: repo.owner
+      });
+
+      if (allowedMembers.status !== 200) {
+        core.info('Failed to fetch the members from the organization');
+        return;
+      }
+
+      if (allowedMembers.data.find(member => member.login === actor)) {
+        await COMMANDS[commandToRun](client);
+      }  
+    } 
+  } catch (error) {
+    core.setFailed(error.message);
+  }
+}
+
+async function lockIssue(client: GitHubClient) {
+  const { payload, repo } = github.context;
+
+  await client.rest.issues.lock({
+    owner: repo.owner,
+    repo: repo.repo,
+    issue_number: payload.issue.number
+  });
+}
+
+async function duplicateIssue(client: GitHubClient) {
+  const { payload } = github.context;
+
+  await client.rest.issues.update({
+    owner: payload.issue.owner,
+    repo: payload.issue.repo,
+    issue_number: payload.issue.number,
+    state: 'closed'
+  });
+}
