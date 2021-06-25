@@ -8,6 +8,10 @@ inputs:
   repo-token:
     required: true
     description: GitHub token
+  edit-title-command:
+    required: false
+    default: Edit title to
+    description: Command to edit the title of an issue
   lock-command:
     required: false
     default: Lock this issue

@@ -322,7 +322,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const github = __importStar(__webpack_require__(469));
+const BOT_CHARACTER = '/';
 const COMMANDS = {
+    'edit-title': editIssueTitle,
     'lock': lockIssue,
     'duplicate': duplicateIssue
 };
@@ -343,11 +345,12 @@ function run() {
             if (!payload.sender) {
                 throw new Error('Internal error, no sender provided by GitHub');
             }
-            const { body: commentBody, user: commentUser } = payload.comment;
+            const { body: commentBody, id: commentId, user: commentUser } = payload.comment;
             // Find the command used.
             const commandToRun = Object.keys(COMMANDS)
                 .find(key => {
-                return commentBody.startsWith(core.getInput(`${key}-command`));
+                return commentBody.startsWith(core.getInput(`${key}-command`)) ||
+                    commentBody.startsWith(BOT_CHARACTER + key);
             });
             if (commandToRun) {
                 core.info(`Command found: ${commandToRun}`);
@@ -361,7 +364,16 @@ function run() {
                     return;
                 }
                 if (allowedMembers.data.find(member => member.login === commentUser.login)) {
-                    yield COMMANDS[commandToRun](client);
+                    const commandFn = COMMANDS[commandToRun];
+                    yield commandFn(client, commentBody);
+                    // If it is a bot command, delete the comment.
+                    if (commentBody.startsWith(BOT_CHARACTER)) {
+                        yield client.rest.issues.deleteComment({
+                            owner: repo.owner,
+                            repo: repo.repo,
+                            comment_id: commentId
+                        });
+                    }
                 }
                 else {
                     core.info('The comment author is not a organization member');
@@ -393,8 +405,13 @@ function lockIssue(client) {
         core.info(`Issue #${payload.issue.number} locked`);
     });
 }
-function duplicateIssue(client) {
+function duplicateIssue(client, commentBody) {
     return __awaiter(this, void 0, void 0, function* () {
+        // If the comment was a question, don't execute the command.
+        if (!commentBody.startsWith(BOT_CHARACTER) && commentBody.match(/#\d{3,4}\?/)) {
+            core.info('Issue not closed because the comment contains a question');
+            return;
+        }
         const { issue, repo } = github.context;
         const issueMetadata = {
             owner: issue.owner,
@@ -411,6 +428,34 @@ function duplicateIssue(client) {
             });
             core.info(`Issue #${issue.number} closed`);
         }
+    });
+}
+function editIssueTitle(client) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { issue, payload, repo } = github.context;
+        const commentBody = payload.comment.body;
+        // Get the new title inside a double quotes string style,
+        // with support to escaping.
+        const newTitleMatch = commentBody.match(/"(?:[^"\\]|\\.)*"/);
+        if (!newTitleMatch) {
+            core.info('Title not specified');
+            return;
+        }
+        // Remove the surrounding double quotes and
+        // parse the escaping characters, so \" will become ".
+        // The other escaping characters, such as \n and \t,
+        // will be removed from the string.
+        const newTitle = newTitleMatch[0]
+            .slice(1, -1)
+            .replace(/\\"/g, '"')
+            .replace(/\\(.)/g, '');
+        yield client.rest.issues.update({
+            owner: repo.owner,
+            repo: repo.repo,
+            issue_number: issue.number,
+            title: newTitle
+        });
+        core.info(`Title of the issue #${payload.issue.number} edited`);
     });
 }
 run();

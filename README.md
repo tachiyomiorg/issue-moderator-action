@@ -27,5 +27,6 @@ jobs:
 | Name | Description | Default value |
 | ---- | ----------- | ------------- |
 | `repo-token` | GitHub token |  |
-| `lock-command` | Optional lock command text. | Lock this issue |
 | `duplicate-command` | Optional duplicate command text. | Duplicate of # |
+| `edit-title-command` | Optional edit issue title command text. | Edit title to |
+| `lock-command` | Optional lock command text. | Lock this issue |
