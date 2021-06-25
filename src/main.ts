@@ -7,7 +7,8 @@ type GitHubClient = InstanceType<typeof GitHub>
 type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam'
 type CommandFn = (client: GitHubClient, commentBody: string) => Promise<void>
 
-const BOT_CHARACTER = '/'
+const BOT_CHARACTERS = '^[/?!]'
+const BOT_REGEX = new RegExp(BOT_CHARACTERS)
 
 const COMMANDS: Record<string, CommandFn> = {
   'edit-title': editIssueTitle,
@@ -46,7 +47,7 @@ async function run() {
     const commandToRun = Object.keys(COMMANDS)
       .find(key => {
         return commentBody.startsWith(core.getInput(`${key}-command`)) ||
-          commentBody.startsWith(BOT_CHARACTER + key);
+          commentBody.match(new RegExp(BOT_CHARACTERS + key));
       });
 
     if (commandToRun) {
@@ -72,7 +73,7 @@ async function run() {
         await commandFn(client, commentBody);
 
         // If it is a bot command, delete the comment.
-        if (commentBody.startsWith(BOT_CHARACTER)) {
+        if (commentBody.match(BOT_REGEX)) {
           await client.rest.issues.deleteComment({
             owner: repo.owner,
             repo: repo.repo,
@@ -112,7 +113,7 @@ async function lockIssue(client: GitHubClient) {
 
 async function duplicateIssue(client: GitHubClient, commentBody: string) {
   // If the comment was a question, don't execute the command.
-  if (!commentBody.startsWith(BOT_CHARACTER) && commentBody.match(/#\d{3,4}\?/)) {
+  if (!commentBody.match(BOT_REGEX) && commentBody.match(/#\d{3,4}\?/)) {
     core.info('Issue not closed because the comment contains a question');
     return;
   }

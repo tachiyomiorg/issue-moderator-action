@@ -322,7 +322,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const github = __importStar(__webpack_require__(469));
-const BOT_CHARACTER = '/';
+const BOT_CHARACTERS = '^[/?!]';
+const BOT_REGEX = new RegExp(BOT_CHARACTERS);
 const COMMANDS = {
     'edit-title': editIssueTitle,
     'lock': lockIssue,
@@ -350,7 +351,7 @@ function run() {
             const commandToRun = Object.keys(COMMANDS)
                 .find(key => {
                 return commentBody.startsWith(core.getInput(`${key}-command`)) ||
-                    commentBody.startsWith(BOT_CHARACTER + key);
+                    commentBody.match(new RegExp(BOT_CHARACTERS + key));
             });
             if (commandToRun) {
                 core.info(`Command found: ${commandToRun}`);
@@ -367,7 +368,7 @@ function run() {
                     const commandFn = COMMANDS[commandToRun];
                     yield commandFn(client, commentBody);
                     // If it is a bot command, delete the comment.
-                    if (commentBody.startsWith(BOT_CHARACTER)) {
+                    if (commentBody.match(BOT_REGEX)) {
                         yield client.rest.issues.deleteComment({
                             owner: repo.owner,
                             repo: repo.repo,
@@ -408,7 +409,7 @@ function lockIssue(client) {
 function duplicateIssue(client, commentBody) {
     return __awaiter(this, void 0, void 0, function* () {
         // If the comment was a question, don't execute the command.
-        if (!commentBody.startsWith(BOT_CHARACTER) && commentBody.match(/#\d{3,4}\?/)) {
+        if (!commentBody.match(BOT_REGEX) && commentBody.match(/#\d{3,4}\?/)) {
             core.info('Issue not closed because the comment contains a question');
             return;
         }
