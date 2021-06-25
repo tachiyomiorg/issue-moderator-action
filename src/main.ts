@@ -37,11 +37,7 @@ async function run() {
       throw new Error('Internal error, no sender provided by GitHub');
     }
 
-    const { 
-      body: commentBody,
-      id: commentId,
-      user: commentUser
-    } = payload.comment;
+    const { body: commentBody, user: commentUser } = payload.comment;
 
     // Find the command used.
     const commandToRun = Object.keys(COMMANDS)
@@ -71,15 +67,6 @@ async function run() {
         const commandFn = COMMANDS[commandToRun];
 
         await commandFn(client, commentBody);
-
-        // If it is a bot command, delete the comment.
-        if (commentBody.match(BOT_REGEX)) {
-          await client.rest.issues.deleteComment({
-            owner: repo.owner,
-            repo: repo.repo,
-            comment_id: commentId
-          })
-        }
       } else {
         core.info('The comment author is not a organization member');
       }
