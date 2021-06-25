@@ -5,8 +5,13 @@ import { IssueCommentEvent } from '@octokit/webhooks-definitions/schema';
 
 type GitHubClient = InstanceType<typeof GitHub>
 type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam'
+type CommandFn = (client: GitHubClient, commentBody: string) => Promise<void>
 
-const COMMANDS: Record<string, (client: GitHubClient) => Promise<void>> = {
+const BOT_CHARACTERS = '^[/?!]'
+const BOT_REGEX = new RegExp(BOT_CHARACTERS)
+
+const COMMANDS: Record<string, CommandFn> = {
+  'edit-title': editIssueTitle,
   'lock': lockIssue,
   'duplicate': duplicateIssue
 }
@@ -37,7 +42,8 @@ async function run() {
     // Find the command used.
     const commandToRun = Object.keys(COMMANDS)
       .find(key => {
-        return commentBody.startsWith(core.getInput(`${key}-command`));
+        return commentBody.startsWith(core.getInput(`${key}-command`)) ||
+          commentBody.match(new RegExp(BOT_CHARACTERS + key));
       });
 
     if (commandToRun) {
@@ -58,7 +64,9 @@ async function run() {
       }
 
       if (allowedMembers.data.find(member => member.login === commentUser.login)) {
-        await COMMANDS[commandToRun](client);
+        const commandFn = COMMANDS[commandToRun];
+
+        await commandFn(client, commentBody);
       } else {
         core.info('The comment author is not a organization member');
       }
@@ -90,7 +98,13 @@ async function lockIssue(client: GitHubClient) {
   core.info(`Issue #${payload.issue.number} locked`);
 }
 
-async function duplicateIssue(client: GitHubClient) {
+async function duplicateIssue(client: GitHubClient, commentBody: string) {
+  // If the comment was a question, don't execute the command.
+  if (!commentBody.match(BOT_REGEX) && commentBody.match(/#\d{3,4}\?/)) {
+    core.info('Issue not closed because the comment contains a question');
+    return;
+  }
+
   const { issue, repo } = github.context;
 
   const issueMetadata = {
@@ -111,6 +125,38 @@ async function duplicateIssue(client: GitHubClient) {
 
     core.info(`Issue #${issue.number} closed`);
   }
+}
+
+async function editIssueTitle(client: GitHubClient) {
+  const { issue, payload, repo } = github.context;
+  const commentBody: string = payload.comment.body;
+
+  // Get the new title inside a double quotes string style,
+  // with support to escaping.
+  const newTitleMatch = commentBody.match(/"(?:[^"\\]|\\.)*"/);
+
+  if (!newTitleMatch) {
+    core.info('Title not specified');
+    return;
+  }
+
+  // Remove the surrounding double quotes and
+  // parse the escaping characters, so \" will become ".
+  // The other escaping characters, such as \n and \t,
+  // will be removed from the string.
+  const newTitle = newTitleMatch[0]
+    .slice(1, -1)
+    .replace(/\\"/g, '"')
+    .replace(/\\(.)/g, '')
+
+  await client.rest.issues.update({
+    owner: repo.owner,
+    repo: repo.repo,
+    issue_number: issue.number,
+    title: newTitle
+  });
+
+  core.info(`Title of the issue #${payload.issue.number} edited`);
 }
 
 run();
