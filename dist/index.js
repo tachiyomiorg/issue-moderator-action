@@ -389,7 +389,9 @@ function minimizeComment(client, commentId) {
         // provide the minimize/hide comment method.
         yield client.graphql(`
       mutation MinimizeComment($input: MinimizeCommentInput!) {
-        minimizeComment(input: $input)
+        minimizeComment(input: $input) {
+          clientMutationId
+        }
       }
     `, {
             input: {
