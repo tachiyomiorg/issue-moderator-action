@@ -369,9 +369,7 @@ function run() {
                     yield commandFn(client, commentBody);
                     // If the command is invoked by the bot-like method,
                     // the comment will be minimized as resolved.
-                    if (commentBody.match(BOT_REGEX)) {
-                        yield minimizeComment(client, commentId);
-                    }
+                    yield minimizeComment(client, commentId);
                 }
                 else {
                     core.info('The comment author is not a organization member');

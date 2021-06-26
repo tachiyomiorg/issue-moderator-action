@@ -37,8 +37,7 @@ All commands can be used in more bot-like way, that supports `?`, `!`
 and `/` as the invocation character, and alternatively with a more 
 human readable way, with sentences that can be customized.
 
-If the command is invoked by the bot-like way, the comment
-will be minimized and marked as resolved.
+The comment with the command will be minimized and marked as resolved.
 
 ### Duplicate
 

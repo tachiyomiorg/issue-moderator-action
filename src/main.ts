@@ -74,9 +74,7 @@ async function run() {
 
         // If the command is invoked by the bot-like method,
         // the comment will be minimized as resolved.
-        if (commentBody.match(BOT_REGEX)) {
-          await minimizeComment(client, commentId)
-        }
+        await minimizeComment(client, commentId)
       } else {
         core.info('The comment author is not a organization member');
       }
