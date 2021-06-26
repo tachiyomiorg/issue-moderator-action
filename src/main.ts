@@ -91,7 +91,9 @@ async function minimizeComment(client: GitHubClient, commentId: number) {
   await client.graphql(
     `
       mutation MinimizeComment($input: MinimizeCommentInput!) {
-        minimizeComment(input: $input)
+        minimizeComment(input: $input) {
+          clientMutationId
+        }
       }
     `,
     {
