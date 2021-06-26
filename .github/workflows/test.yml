@@ -10,7 +10,7 @@ jobs:
       uses: actions/checkout@v1
     
     - name: Moderate the issue
-      # uses: tachiyomiorg/issue-moderator-action@v1.0
+      # uses: tachiyomiorg/issue-moderator-action@v1.1
       uses: ./
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
