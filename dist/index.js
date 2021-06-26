@@ -346,7 +346,7 @@ function run() {
             if (!payload.sender) {
                 throw new Error('Internal error, no sender provided by GitHub');
             }
-            const { body: commentBody, id: commentId, user: commentUser } = payload.comment;
+            const { body: commentBody, node_id: commentNodeId, user: commentUser } = payload.comment;
             // Find the command used.
             const commandToRun = Object.keys(COMMANDS)
                 .find(key => {
@@ -368,7 +368,7 @@ function run() {
                     const commandFn = COMMANDS[commandToRun];
                     yield commandFn(client, commentBody);
                     // Comments with commands are always minimized and marked as resolved.
-                    yield minimizeComment(client, commentId);
+                    yield minimizeComment(client, commentNodeId);
                 }
                 else {
                     core.info('The comment author is not a organization member');
@@ -383,7 +383,7 @@ function run() {
         }
     });
 }
-function minimizeComment(client, commentId) {
+function minimizeComment(client, commentNodeId) {
     return __awaiter(this, void 0, void 0, function* () {
         // Use the GitHub GraphQL API since the REST API does not
         // provide the minimize/hide comment method.
@@ -396,7 +396,7 @@ function minimizeComment(client, commentId) {
     `, {
             input: {
                 classifier: 'RESOLVED',
-                subjectId: commentId
+                subjectId: commentNodeId
             }
         });
     });

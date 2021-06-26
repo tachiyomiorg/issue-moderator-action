@@ -39,7 +39,7 @@ async function run() {
 
     const {
       body: commentBody,
-      id: commentId,
+      node_id: commentNodeId,
       user: commentUser
     } = payload.comment;
 
@@ -73,7 +73,7 @@ async function run() {
         await commandFn(client, commentBody);
 
         // Comments with commands are always minimized and marked as resolved.
-        await minimizeComment(client, commentId)
+        await minimizeComment(client, commentNodeId)
       } else {
         core.info('The comment author is not a organization member');
       }
@@ -85,7 +85,7 @@ async function run() {
   }
 }
 
-async function minimizeComment(client: GitHubClient, commentId: number) {
+async function minimizeComment(client: GitHubClient, commentNodeId: string) {
   // Use the GitHub GraphQL API since the REST API does not
   // provide the minimize/hide comment method.
   await client.graphql(
@@ -99,7 +99,7 @@ async function minimizeComment(client: GitHubClient, commentId: number) {
     {
       input: {
         classifier: 'RESOLVED',
-        subjectId: commentId
+        subjectId: commentNodeId
       }
     }
   )
