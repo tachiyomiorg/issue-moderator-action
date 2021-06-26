@@ -72,8 +72,7 @@ async function run() {
 
         await commandFn(client, commentBody);
 
-        // If the command is invoked by the bot-like method,
-        // the comment will be minimized as resolved.
+        // Comments with commands are always minimized and marked as resolved.
         await minimizeComment(client, commentId)
       } else {
         core.info('The comment author is not a organization member');

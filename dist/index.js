@@ -367,8 +367,7 @@ function run() {
                 if (allowedMembers.data.find(member => member.login === commentUser.login)) {
                     const commandFn = COMMANDS[commandToRun];
                     yield commandFn(client, commentBody);
-                    // If the command is invoked by the bot-like method,
-                    // the comment will be minimized as resolved.
+                    // Comments with commands are always minimized and marked as resolved.
                     yield minimizeComment(client, commentId);
                 }
                 else {
