@@ -8,9 +8,9 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v1
-    
+
     - name: Moderate the issue
-      # uses: tachiyomiorg/issue-moderator-action@v1.1
+      # uses: tachiyomiorg/issue-moderator-action@v1.2
       uses: ./
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}

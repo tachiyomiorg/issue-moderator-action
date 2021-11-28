@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Moderate issues
-      uses: tachiyomiorg/issue-moderator-action@v1.1
+      uses: tachiyomiorg/issue-moderator-action@v1.2
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -34,7 +34,7 @@ jobs:
 ## Commands
 
 All commands can be used in more bot-like way, that supports `?`, `!`
-and `/` as the invocation character, and alternatively with a more 
+and `/` as the invocation character, and alternatively with a more
 human readable way, with sentences that can be customized.
 
 The comment with the command will be minimized and marked as resolved.
@@ -48,9 +48,9 @@ Usage:
 - **Bot-like**: `?duplicate #<issue-number>`
 - **Sentence**: `Duplicate of #<issue-number>`
 
-If the sentence way is used and the comment contains a question mark 
-after the issue number, the command will not be executed as a way to 
-preventing the current issue from being closed if the person that 
+If the sentence way is used and the comment contains a question mark
+after the issue number, the command will not be executed as a way to
+preventing the current issue from being closed if the person that
 commented are in doubt if the current issue is indeed a duplicate.
 
 ### Edit issue title
