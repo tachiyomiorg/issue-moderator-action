@@ -3,18 +3,31 @@ import * as github from '@actions/github';
 import { GitHub } from '@actions/github/lib/utils';
 import { IssueCommentEvent } from '@octokit/webhooks-definitions/schema';
 
-type GitHubClient = InstanceType<typeof GitHub>
-type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam'
-type CommandFn = (client: GitHubClient, commentBody: string) => Promise<void>
-
-const BOT_CHARACTERS = '^[/?!]'
-const BOT_REGEX = new RegExp(BOT_CHARACTERS)
-
-const COMMANDS: Record<string, CommandFn> = {
-  'edit-title': editIssueTitle,
-  'lock': lockIssue,
-  'duplicate': duplicateIssue
+type GitHubClient = InstanceType<typeof GitHub>;
+type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam';
+type CommandFn = (client: GitHubClient, commentBody: string) => Promise<void>;
+interface Command {
+  minimizeComment: boolean;
+  fn: CommandFn;
 }
+
+const BOT_CHARACTERS = '^[/?!]';
+const BOT_REGEX = new RegExp(BOT_CHARACTERS);
+
+const COMMANDS: Record<string, Command> = {
+  'edit-title': {
+    minimizeComment: true,
+    fn: editIssueTitle,
+  },
+  'lock': {
+    minimizeComment: true,
+    fn: lockIssue,
+  },
+  'duplicate': {
+    minimizeComment: false,
+    fn: duplicateIssue,
+  },
+};
 
 const ALLOWED_ACTIONS = ['created'];
 
@@ -26,7 +39,7 @@ async function run() {
       return;
     }
 
-    const payload = github.context.payload as IssueCommentEvent
+    const payload = github.context.payload as IssueCommentEvent;
 
     // Do nothing if it's wasn't a relevant action or it's not an issue comment.
     if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.comment) {
@@ -68,23 +81,25 @@ async function run() {
       }
 
       if (allowedMembers.data.find(member => member.login === commentUser.login)) {
-        const commandFn = COMMANDS[commandToRun];
+        const command = COMMANDS[commandToRun];
 
-        await commandFn(client, commentBody);
+        await command.fn(client, commentBody);
 
-        // Comments with commands are always minimized and marked as resolved.
-        await minimizeComment(client, commentNodeId)
+        if (command.minimizeComment) {
+          await minimizeComment(client, commentNodeId);
+        }
       } else {
         core.info('The comment author is not a organization member');
       }
     } else {
-      core.info('No commands found on the comment');
+      core.info('No commands found');
     }
   } catch (error) {
     core.setFailed(error.message);
   }
 }
 
+// Minimize comment and marked as resolved
 async function minimizeComment(client: GitHubClient, commentNodeId: string) {
   // Use the GitHub GraphQL API since the REST API does not
   // provide the minimize/hide comment method.
@@ -99,8 +114,8 @@ async function minimizeComment(client: GitHubClient, commentNodeId: string) {
     {
       input: {
         classifier: 'RESOLVED',
-        subjectId: commentNodeId
-      }
+        subjectId: commentNodeId,
+      },
     }
   )
 }
@@ -137,7 +152,7 @@ async function duplicateIssue(client: GitHubClient, commentBody: string) {
   const issueMetadata = {
     owner: issue.owner,
     repo: issue.repo,
-    issue_number: issue.number
+    issue_number: issue.number,
   };
 
   const issueData = await client.rest.issues.get(issueMetadata);
@@ -147,7 +162,7 @@ async function duplicateIssue(client: GitHubClient, commentBody: string) {
       owner: repo.owner,
       repo: repo.repo,
       issue_number: issue.number,
-      state: 'closed'
+      state: 'closed',
     });
 
     core.info(`Issue #${issue.number} closed`);
@@ -174,13 +189,13 @@ async function editIssueTitle(client: GitHubClient) {
   const newTitle = newTitleMatch[0]
     .slice(1, -1)
     .replace(/\\"/g, '"')
-    .replace(/\\(.)/g, '')
+    .replace(/\\(.)/g, '');
 
   await client.rest.issues.update({
     owner: repo.owner,
     repo: repo.repo,
     issue_number: issue.number,
-    title: newTitle
+    title: newTitle,
   });
 
   core.info(`Title of the issue #${payload.issue.number} edited`);
