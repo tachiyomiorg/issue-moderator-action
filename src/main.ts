@@ -2,6 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { GitHub } from '@actions/github/lib/utils';
 import { Issue, IssueCommentEvent, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
+import dedent from 'dedent'
 
 type GitHubClient = InstanceType<typeof GitHub>;
 type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam';
@@ -136,7 +137,7 @@ async function checkForDuplicates() {
 
   await client.rest.issues.createComment({
     ...issueMetadata,
-    body: `
+    body: dedent`
       This issue was closed because it is a duplicate of ${duplicateIssuesText}.
 
       *This is an automated action. If you think this is a mistake, please
