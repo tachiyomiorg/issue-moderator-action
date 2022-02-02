@@ -29,9 +29,10 @@ const COMMANDS: Record<string, Command> = {
   },
 };
 
-const ALLOWED_ACTIONS = ['created'];
+const ALLOWED_COMMENT_ACTIONS = ['created'];
+const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
-const URL_REGEX = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+const URL_REGEX = /(https?:\/\/)?([\w\-]+\.)+[\w\-]{2,}/gi;
 const URL_FILE_REGEX = /\.(png|jpg|jpeg|gif)$/i
 const EXCLUSION_LIST = [
   'tachiyomi.org',
@@ -42,71 +43,16 @@ const EXCLUSION_LIST = [
 
 async function run() {
   try {
-    const { eventName, repo } = github.context;
+    const { eventName } = github.context;
 
     if (eventName === 'issues') {
       await checkForDuplicates();
       return;
     }
 
-    if (eventName !== 'issue_comment') {
+    if (eventName === 'issue_comment') {
+      await checkForCommand();
       return;
-    }
-
-    const payload = github.context.payload as IssueCommentEvent;
-
-    // Do nothing if it's wasn't a relevant action or it's not an issue comment.
-    if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.comment) {
-      core.info('Irrelevant action trigger');
-      return;
-    }
-    if (!payload.sender) {
-      throw new Error('Internal error, no sender provided by GitHub');
-    }
-
-    const {
-      body: commentBody,
-      node_id: commentNodeId,
-      user: commentUser
-    } = payload.comment;
-
-    // Find the command used.
-    const commandToRun = Object.keys(COMMANDS)
-      .find(key => {
-        return commentBody.startsWith(core.getInput(`${key}-command`)) ||
-          commentBody.match(new RegExp(BOT_CHARACTERS + key));
-      });
-
-    if (commandToRun) {
-      core.info(`Command found: ${commandToRun}`);
-
-      const client = github.getOctokit(
-        core.getInput('repo-token', {required: true})
-      );
-
-      // Get all the members from the organization.
-      const allowedMembers = await client.rest.orgs.listMembers({
-        org: repo.owner
-      });
-
-      if (allowedMembers.status !== 200) {
-        core.info('Failed to fetch the members from the organization');
-        return;
-      }
-
-      if (allowedMembers.data.find(member => member.login === commentUser.login)) {
-        const command = COMMANDS[commandToRun];
-
-        await command.fn(client, commentBody);
-
-        if (command.minimizeComment) {
-          await minimizeComment(client, commentNodeId);
-        }
-      } else {
-        core.info('The comment author is not a organization member');
-      }
-    } else {
-      core.info('No commands found');
     }
   } catch (error) {
     core.setFailed(error.message);
@@ -124,7 +70,7 @@ async function checkForDuplicates() {
 
   const payload = github.context.payload as IssuesOpenedEvent;
 
-  if (payload.action !== 'opened' || !payload.issue) {
+  if (!ALLOWED_ISSUES_ACTIONS.includes(payload.action) || !payload.issue) {
     core.info('Irrelevant action trigger');
     return;
   }
@@ -163,15 +109,15 @@ async function checkForDuplicates() {
     per_page: 100
   });
 
-  const duplicateIssues: string[] = [];
-
-  allOpenIssues.forEach(issue => {
-    urlsFromIssueBody(issue.body).forEach(url => {
-      if (issueUrls.includes(url)) {
-        duplicateIssues.push('#' + issue.number);
-      }
+  const duplicateIssues = allOpenIssues
+    .map(issue => ({ 
+      number: issue.number, 
+      urls: urlsFromIssueBody(issue.body)
+    }))
+    .filter(currIssue => {
+      return currIssue.urls.some(url => issueUrls.includes(url))
     })
-  });
+    .map(issue => '#' + issue.number)
 
   if (duplicateIssues.length === 0) {
     core.info('No duplicate issues were found');
@@ -210,12 +156,73 @@ function urlsFromIssueBody(body: string): string[] {
         .replace('www.', '')
         .replace(/\/.*$/, '')
         .replace(/\)$/, '')
+        .toLowerCase()
     })
     .filter(url => {
       return !EXCLUSION_LIST.includes(url) && !url.match(URL_FILE_REGEX)
     });
 
   return Array.from(new Set(urls));
+}
+
+// Check if the comment has a valid command and execute it.
+async function checkForCommand() {
+  const { repo } = github.context;
+  const payload = github.context.payload as IssueCommentEvent;
+
+  // Do nothing if it's wasn't a relevant action or it's not an issue comment.
+  if (!ALLOWED_COMMENT_ACTIONS.includes(payload.action) || !payload.comment) {
+    core.info('Irrelevant action trigger');
+    return;
+  }
+  if (!payload.sender) {
+    throw new Error('Internal error, no sender provided by GitHub');
+  }
+
+  const {
+    body: commentBody,
+    node_id: commentNodeId,
+    user: commentUser
+  } = payload.comment;
+
+  // Find the command used.
+  const commandToRun = Object.keys(COMMANDS)
+    .find(key => {
+      return commentBody.startsWith(core.getInput(`${key}-command`)) ||
+        commentBody.match(new RegExp(BOT_CHARACTERS + key));
+    });
+
+  if (commandToRun) {
+    core.info(`Command found: ${commandToRun}`);
+
+    const client = github.getOctokit(
+      core.getInput('repo-token', {required: true})
+    );
+
+    // Get all the members from the organization.
+    const allowedMembers = await client.rest.orgs.listMembers({
+      org: repo.owner
+    });
+
+    if (allowedMembers.status !== 200) {
+      core.info('Failed to fetch the members from the organization');
+      return;
+    }
+
+    if (allowedMembers.data.find(member => member.login === commentUser.login)) {
+      const command = COMMANDS[commandToRun];
+
+      await command.fn(client, commentBody);
+
+      if (command.minimizeComment) {
+        await minimizeComment(client, commentNodeId);
+      }
+    } else {
+      core.info('The comment author is not a organization member');
+    }
+  } else {
+    core.info('No commands found');
+  }
 }
 
 // Minimize comment and marked as resolved
