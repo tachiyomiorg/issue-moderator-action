@@ -117,7 +117,7 @@ async function checkForDuplicates() {
     .filter(currIssue => {
       return currIssue.urls.some(url => issueUrls.includes(url))
     })
-    .map(issue => '#' + issue.number)
+    .map(issue => '#' + issue.number);
 
   if (duplicateIssues.length === 0) {
     core.info('No duplicate issues were found');
@@ -156,7 +156,7 @@ function urlsFromIssueBody(body: string): string[] {
         .replace('www.', '')
         .replace(/\/.*$/, '')
         .replace(/\)$/, '')
-        .toLowerCase()
+        .toLowerCase();
     })
     .filter(url => {
       return !EXCLUSION_LIST.includes(url) && !url.match(URL_FILE_REGEX)
@@ -243,7 +243,7 @@ async function minimizeComment(client: GitHubClient, commentNodeId: string) {
         subjectId: commentNodeId,
       },
     }
-  )
+  );
 }
 
 async function lockIssue(client: GitHubClient) {
