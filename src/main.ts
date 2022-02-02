@@ -2,6 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { GitHub } from '@actions/github/lib/utils';
 import { Issue, IssueCommentEvent, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
+import dedent from 'dedent'
 
 type GitHubClient = InstanceType<typeof GitHub>;
 type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam';
@@ -115,9 +116,10 @@ async function checkForDuplicates() {
       urls: urlsFromIssueBody(issue.body)
     }))
     .filter(currIssue => {
-      return currIssue.urls.some(url => issueUrls.includes(url))
+      return currIssue.number !== issue.number &&
+        currIssue.urls.some(url => issueUrls.includes(url));
     })
-    .map(issue => '#' + issue.number)
+    .map(issue => '#' + issue.number);
 
   if (duplicateIssues.length === 0) {
     core.info('No duplicate issues were found');
@@ -135,7 +137,7 @@ async function checkForDuplicates() {
 
   await client.rest.issues.createComment({
     ...issueMetadata,
-    body: `
+    body: dedent`
       This issue was closed because it is a duplicate of ${duplicateIssuesText}.
 
       *This is an automated action. If you think this is a mistake, please
@@ -156,7 +158,7 @@ function urlsFromIssueBody(body: string): string[] {
         .replace('www.', '')
         .replace(/\/.*$/, '')
         .replace(/\)$/, '')
-        .toLowerCase()
+        .toLowerCase();
     })
     .filter(url => {
       return !EXCLUSION_LIST.includes(url) && !url.match(URL_FILE_REGEX)
@@ -243,7 +245,7 @@ async function minimizeComment(client: GitHubClient, commentNodeId: string) {
         subjectId: commentNodeId,
       },
     }
-  )
+  );
 }
 
 async function lockIssue(client: GitHubClient) {
