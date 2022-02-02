@@ -20,6 +20,16 @@ inputs:
     required: false
     default: "Duplicate of #"
     description: Command to close a duplicate issue
+  duplicate-check-enabled:
+    required: false
+    description: >
+      Control if the action should search for duplicate URLs in opened issues.
+      Set it to 'true' if you want to enable.
+  duplicate-check-label:
+    required: false
+    description: >
+      The label of the opened issues that will be check.
+      It's required if you enabled the duplicate finder.
 runs:
   using: node12
   main: dist/index.js

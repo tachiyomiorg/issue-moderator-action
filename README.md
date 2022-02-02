@@ -1,7 +1,8 @@
 # GitHub action to moderate issues
 
 This action allows the usage of some commands from the organization
-to moderate the issues of a repository.
+to moderate the issues of a repository. It can also search for duplicate
+URLs in the opened issues and close the new opened issue if needed.
 
 ## Installation
 
@@ -10,6 +11,9 @@ To configure the action simply add the following lines to your workflow file:
 ```yml
 name: Moderator
 on:
+  # Add the issues if you want the duplicate URLs check.
+  issues:
+    types: [opened]
   issue_comment:
     types: [created]
 jobs:
@@ -30,6 +34,8 @@ jobs:
 | `duplicate-command` | Optional duplicate command text. | Duplicate of # |
 | `edit-title-command` | Optional edit issue title command text. | Edit title to |
 | `lock-command` | Optional lock command text. | Lock this issue |
+| `duplicate-check-enabled` | Enable the duplicate URL finder if sets to `true`. |  |
+| `duplicate-check-label` | Label of the opened issues to check. |  |
 
 ## Commands
 
@@ -78,3 +84,12 @@ Usage:
 
 - **Bot-like**: `?lock <off-topic|too heated|resolved|spam>`
 - **Sentence**: `Lock this issue as <off-topic|too heated|resolved|spam>`
+
+## Duplicate URLs check
+
+The action can also check for opened issues with a given label for
+duplicate URLs. It's useful if you have a system to request websites
+to be added to your repository through issues.
+
+To enable it, you need to set `duplicate-check-enabled` to `true`
+and define the label that the action should check with `duplicate-check-label`.
