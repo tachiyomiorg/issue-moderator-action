@@ -161,7 +161,7 @@ async function checkForDuplicates() {
     state: 'open',
     labels: labelToCheck,
     per_page: 100
-  })
+  });
 
   const duplicateIssues: string[] = [];
 
