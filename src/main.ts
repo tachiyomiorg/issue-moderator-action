@@ -115,7 +115,8 @@ async function checkForDuplicates() {
       urls: urlsFromIssueBody(issue.body)
     }))
     .filter(currIssue => {
-      return currIssue.urls.some(url => issueUrls.includes(url))
+      return currIssue.number !== issue.number &&
+        currIssue.urls.some(url => issueUrls.includes(url));
     })
     .map(issue => '#' + issue.number);
 
