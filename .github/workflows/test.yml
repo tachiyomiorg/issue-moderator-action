@@ -1,5 +1,7 @@
 name: Issue moderator test
 on:
+  issues:
+    types: [opened]
   issue_comment:
     types: [created]
 jobs:
@@ -14,3 +16,5 @@ jobs:
       uses: ./
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
+        duplicate-check-enabled: true
+        duplicate-check-label: enhancement

@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { GitHub } from '@actions/github/lib/utils';
-import { IssueCommentEvent } from '@octokit/webhooks-definitions/schema';
+import { Issue, IssueCommentEvent, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
 
 type GitHubClient = InstanceType<typeof GitHub>;
 type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam';
@@ -31,9 +31,23 @@ const COMMANDS: Record<string, Command> = {
 
 const ALLOWED_ACTIONS = ['created'];
 
+const URL_REGEX = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+const URL_FILE_REGEX = /\.(png|jpg|jpeg|gif)$/i
+const EXCLUSION_LIST = [
+  'tachiyomi.org',
+  'github.com',
+  'user-images.githubusercontent.com',
+  'gist.github.com'
+];
+
 async function run() {
   try {
     const { eventName, repo } = github.context;
+
+    if (eventName === 'issues') {
+      await checkForDuplicates();
+      return;
+    }
 
     if (eventName !== 'issue_comment') {
       return;
@@ -97,6 +111,111 @@ async function run() {
   } catch (error) {
     core.setFailed(error.message);
   }
+}
+
+// Check if the source request issue is a duplicate.
+async function checkForDuplicates() {
+  const duplicateCheckEnabled = core.getInput('duplicate-check-enabled');
+
+  if (duplicateCheckEnabled !== 'true') {
+    core.info('The duplicate check is disabled');
+    return;
+  }
+
+  const payload = github.context.payload as IssuesOpenedEvent;
+
+  if (payload.action !== 'opened' || !payload.issue) {
+    core.info('Irrelevant action trigger');
+    return;
+  }
+
+  if (!payload.sender) {
+    throw new Error('Internal error, no sender provided by GitHub');
+  }
+
+  const issue = payload.issue as Issue;
+  const labelToCheck = core.getInput('duplicate-check-label', {required: true});
+  const hasTheLabel = issue.labels?.find(label => label.name === labelToCheck);
+
+  if (!hasTheLabel) {
+    core.info('The issue does not have the label defined');
+    return;
+  }
+
+  const issueUrls = urlsFromIssueBody(issue.body)
+
+  if (issueUrls.length === 0) {
+    core.info('No URLs found in the issue body');
+    return;
+  }
+
+  const client = github.getOctokit(
+    core.getInput('repo-token', {required: true})
+  );
+
+  const { repo } = github.context;
+
+  const allOpenIssues = await client.paginate(client.rest.issues.listForRepo, {
+    owner: repo.owner,
+    repo: repo.repo,
+    state: 'open',
+    labels: labelToCheck,
+    per_page: 100
+  })
+
+  const duplicateIssues: string[] = [];
+
+  allOpenIssues.forEach(issue => {
+    urlsFromIssueBody(issue.body).forEach(url => {
+      if (issueUrls.includes(url)) {
+        duplicateIssues.push('#' + issue.number);
+      }
+    })
+  });
+
+  if (duplicateIssues.length === 0) {
+    core.info('No duplicate issues were found');
+    return;
+  }
+
+  const issueMetadata = {
+    owner: repo.owner,
+    repo: repo.repo,
+    issue_number: issue.number
+  };
+
+  const duplicateIssuesText = duplicateIssues.join(', ')
+    .replace(/, ([^,]*)$/, ' and $1');
+
+  await client.rest.issues.createComment({
+    ...issueMetadata,
+    body: `
+      This issue was closed because it is a duplicate of ${duplicateIssuesText}.
+
+      *This is an automated action. If you think this is a mistake, please
+      comment about it so the issue can be manually reopened if needed.*
+    `
+  });
+
+  await client.rest.issues.update({
+    ...issueMetadata,
+    state: 'closed'
+  });
+}
+
+function urlsFromIssueBody(body: string): string[] {
+  const urls = Array.from(body.matchAll(URL_REGEX))
+    .map(url => {
+      return url[0]
+        .replace('www.', '')
+        .replace(/\/.*$/, '')
+        .replace(/\)$/, '')
+    })
+    .filter(url => {
+      return !EXCLUSION_LIST.includes(url) && !url.match(URL_FILE_REGEX)
+    });
+
+  return Array.from(new Set(urls));
 }
 
 // Minimize comment and marked as resolved
