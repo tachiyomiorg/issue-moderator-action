@@ -20,22 +20,22 @@ jobs:
   moderate:
     runs-on: ubuntu-latest
     steps:
-    - name: Moderate issues
-      uses: tachiyomiorg/issue-moderator-action@v1.2
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Moderate issues
+        uses: tachiyomiorg/issue-moderator-action@v1.2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ## Inputs
 
-| Name | Description | Default value |
-| ---- | ----------- | ------------- |
-| `repo-token` | GitHub token |  |
-| `duplicate-command` | Optional duplicate command text. | Duplicate of # |
-| `edit-title-command` | Optional edit issue title command text. | Edit title to |
-| `lock-command` | Optional lock command text. | Lock this issue |
-| `duplicate-check-enabled` | Enable the duplicate URL finder if sets to `true`. |  |
-| `duplicate-check-label` | Label of the opened issues to check. |  |
+| Name                      | Description                                        | Default value   |
+| ------------------------- | -------------------------------------------------- | --------------- |
+| `repo-token`              | GitHub token                                       |                 |
+| `duplicate-command`       | Optional duplicate command text.                   | Duplicate of #  |
+| `edit-title-command`      | Optional edit issue title command text.            | Edit title to   |
+| `lock-command`            | Optional lock command text.                        | Lock this issue |
+| `duplicate-check-enabled` | Enable the duplicate URL finder if sets to `true`. |                 |
+| `duplicate-check-label`   | Label of the opened issues to check.               |                 |
 
 ## Commands
 

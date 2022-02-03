@@ -18,7 +18,7 @@ inputs:
     description: Command to lock an issue
   duplicate-command:
     required: false
-    default: "Duplicate of #"
+    default: 'Duplicate of #'
     description: Command to close a duplicate issue
   duplicate-check-enabled:
     required: false

@@ -8,13 +8,13 @@ jobs:
   moderate:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v1
+      - name: Checkout repo
+        uses: actions/checkout@v1
 
-    - name: Moderate the issue
-      # uses: tachiyomiorg/issue-moderator-action@v1
-      uses: ./
-      with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        duplicate-check-enabled: true
-        duplicate-check-label: enhancement
+      - name: Moderate the issue
+        # uses: tachiyomiorg/issue-moderator-action@v1
+        uses: ./
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          duplicate-check-enabled: true
+          duplicate-check-label: enhancement
