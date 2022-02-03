@@ -38,7 +38,6 @@ const ALLOWED_COMMENT_ACTIONS = ['created'];
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
 const URL_REGEX = /(https?:\/\/)?([\w\-]+\.)+[\w\-]{2,}/gi;
-const URL_FILE_REGEX = /\.(png|jpg|jpeg|gif)$/i;
 const EXCLUSION_LIST = [
   'tachiyomi.org',
   'github.com',
@@ -119,17 +118,17 @@ async function checkForDuplicates() {
   });
 
   const duplicateIssues = allOpenIssues
-    .map((issue) => ({
-      number: issue.number,
-      urls: urlsFromIssueBody(issue.body),
+    .map((currIssue) => ({
+      number: currIssue.number,
+      urls: urlsFromIssueBody(currIssue.body),
     }))
     .filter((currIssue) => {
       return (
         currIssue.number !== issue.number &&
-        currIssue.urls.some((url) => issueUrls.includes(url))
+        issueUrls.some((url) => currIssue.urls.includes(url))
       );
     })
-    .map((issue) => '#' + issue.number);
+    .map((currIssue) => '#' + currIssue.number);
 
   if (duplicateIssues.length === 0) {
     core.info('No duplicate issues were found');
@@ -165,14 +164,10 @@ function urlsFromIssueBody(body: string): string[] {
   const urls = Array.from(body.matchAll(URL_REGEX))
     .map((url) => {
       return url[0]
-        .replace('www.', '')
-        .replace(/\/.*$/, '')
-        .replace(/\)$/, '')
+        .replace(/https?:\/\/(www\.)?/g, '')
         .toLowerCase();
     })
-    .filter((url) => {
-      return !EXCLUSION_LIST.includes(url) && !url.match(URL_FILE_REGEX);
-    });
+    .filter((url) => !EXCLUSION_LIST.includes(url));
 
   return Array.from(new Set(urls));
 }
