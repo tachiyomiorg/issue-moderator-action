@@ -111,8 +111,8 @@ async function checkForDuplicates() {
   });
 
   const duplicateIssues = allOpenIssues
-    .map(issue => ({ 
-      number: issue.number, 
+    .map(issue => ({
+      number: issue.number,
       urls: urlsFromIssueBody(issue.body)
     }))
     .filter(currIssue => {
@@ -140,8 +140,7 @@ async function checkForDuplicates() {
     body: dedent`
       This issue was closed because it is a duplicate of ${duplicateIssuesText}.
 
-      *This is an automated action. If you think this is a mistake, please
-      comment about it so the issue can be manually reopened if needed.*
+      *This is an automated action. If you think this is a mistake, please comment about it so the issue can be manually reopened if needed.*
     `
   });
 
