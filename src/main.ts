@@ -38,7 +38,6 @@ const ALLOWED_COMMENT_ACTIONS = ['created'];
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
 const URL_REGEX = /(https?:\/\/)?([\w\-]+\.)+[\w\-]{2,}/gi;
-const URL_FILE_REGEX = /\.(png|jpg|jpeg|gif)$/i;
 const EXCLUSION_LIST = [
   'tachiyomi.org',
   'github.com',
@@ -165,14 +164,10 @@ function urlsFromIssueBody(body: string): string[] {
   const urls = Array.from(body.matchAll(URL_REGEX))
     .map((url) => {
       return url[0]
-        .replace('www.', '')
-        .replace(/\/.*$/, '')
-        .replace(/\)$/, '')
+        .replace(/https?:\/\/(www\.)?/g, '')
         .toLowerCase();
     })
-    .filter((url) => {
-      return !EXCLUSION_LIST.includes(url) && !url.match(URL_FILE_REGEX);
-    });
+    .filter((url) => !EXCLUSION_LIST.includes(url));
 
   return Array.from(new Set(urls));
 }
