@@ -1,6 +1,6 @@
 {
   "name": "@tachiyomiorg/issue-moderator-action",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "GitHub action to moderate issues",
   "main": "dist/index.js",
   "scripts": {
