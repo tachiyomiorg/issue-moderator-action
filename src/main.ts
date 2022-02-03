@@ -119,17 +119,17 @@ async function checkForDuplicates() {
   });
 
   const duplicateIssues = allOpenIssues
-    .map((issue) => ({
-      number: issue.number,
-      urls: urlsFromIssueBody(issue.body),
+    .map((currIssue) => ({
+      number: currIssue.number,
+      urls: urlsFromIssueBody(currIssue.body),
     }))
     .filter((currIssue) => {
       return (
         currIssue.number !== issue.number &&
-        currIssue.urls.some((url) => issueUrls.includes(url))
+        issueUrls.some((url) => currIssue.urls.includes(url))
       );
     })
-    .map((issue) => '#' + issue.number);
+    .map((currIssue) => '#' + currIssue.number);
 
   if (duplicateIssues.length === 0) {
     core.info('No duplicate issues were found');
