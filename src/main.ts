@@ -163,9 +163,7 @@ async function checkForDuplicates() {
 function urlsFromIssueBody(body: string): string[] {
   const urls = Array.from(body.matchAll(URL_REGEX))
     .map((url) => {
-      return url[0]
-        .replace(/https?:\/\/(www\.)?/g, '')
-        .toLowerCase();
+      return url[0].replace(/https?:\/\/(www\.)?/g, '').toLowerCase();
     })
     .filter((url) => !EXCLUSION_LIST.includes(url));
 
