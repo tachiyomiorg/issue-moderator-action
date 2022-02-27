@@ -1,9 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import {
-  Issue,
-  IssuesOpenedEvent,
-} from '@octokit/webhooks-definitions/schema';
+import { Issue, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
 import dedent from 'dedent';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
