@@ -15,8 +15,11 @@ name: Moderator
 on:
   issues:
     types:
-      # If you want the duplicate URL checker
+      # If you want the duplicate URL checker and/or the auto-closer
       - opened
+      # If you want the auto-closer to run
+      - edited
+      - reopened
   issue_comment:
     types: [created]
 jobs:
@@ -33,14 +36,16 @@ jobs:
 
 ## Inputs
 
-| Name                      | Description                                        | Default value   |
-| ------------------------- | -------------------------------------------------- | --------------- |
-| `repo-token`              | GitHub token                                       |                 |
-| `duplicate-command`       | Optional duplicate command text.                   | Duplicate of #  |
-| `edit-title-command`      | Optional edit issue title command text.            | Edit title to   |
-| `lock-command`            | Optional lock command text.                        | Lock this issue |
-| `duplicate-check-enabled` | Enable the duplicate URL finder if sets to `true`. |                 |
-| `duplicate-check-label`   | Label of the opened issues to check.               |                 |
+| Name                      | Description                                                                                     | Default value   |
+| ------------------------- | ----------------------------------------------------------------------------------------------- | --------------- |
+| `repo-token`              | GitHub token                                                                                    |                 |
+| `duplicate-command`       | Optional duplicate command text.                                                                | Duplicate of #  |
+| `edit-title-command`      | Optional edit issue title command text.                                                         | Edit title to   |
+| `lock-command`            | Optional lock command text.                                                                     | Lock this issue |
+| `duplicate-check-enabled` | Enable the duplicate URL finder if sets to `true`.                                              |                 |
+| `duplicate-check-label`   | Label of the opened issues to check.                                                            |                 |
+| `auto-close-rules`        | A JSON-compliant string containing a list of rules, where a rule consists of the content below. |                 |
+| `auto-close-ignore-label` | Optional label name. If present, auto-close rule execution is skipped.                          |                 |
 
 ---
 
@@ -102,3 +107,40 @@ to be added to your repository through issues.
 
 To enable it, you need to set `duplicate-check-enabled` to `true`
 and define the label that the action should check with `duplicate-check-label`.
+
+---
+
+## Auto closer
+
+Automatically close issues whose title or body text matches the specified regular expression pattern.
+
+Rules are re-evaluated on issue edits and automatically reopens the issue if the rules pass.
+
+### Rule
+
+```js
+{
+  type: 'title' | 'body' | 'both';
+  regex: string;
+  message: string;
+  ignoreCase: boolean | undefined;
+}
+```
+
+- `type`: Part to run regex against.
+- `regex`: String compiled to a JavaScript `RegExp`. If matched, the issue is closed.
+- `message`: ES2015-style template literal evaluated with the issue webhook payload in context (see [payload example](https://developer.github.com/v3/activity/events/types/#webhook-payload-example-15)). Posted when the issue is closed. You can use `{match}` as a placeholder to the first match.
+- `ignoreCase`: Optionally make the regex case insensitive. Defaults to `false`.
+
+Example:
+
+```yml
+auto-close-rules: |
+  [
+    {
+      "type": "title",
+      "regex": ".*Placeholder title.*",
+      "message": "@${issue.user.login} this issue was automatically closed because it did not follow the issue template"
+    }
+  ]
+```

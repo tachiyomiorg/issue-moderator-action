@@ -30,6 +30,21 @@ inputs:
     description: >
       The label of the opened issues that will be check.
       It's required if you enabled the duplicate finder.
+  auto-close-rules:
+    required: false
+    description: |
+      A JSON-compliant string containing a list of rules, where a rule consists of:
+
+      {
+        type: 'title' | 'body' | 'both';  // Part to run regex against.
+        regex: string;                    // Pattern which if matched closes the issue.
+        message: string;                  // Message to post when closing the issue.
+                                          // You can use {match} as a placeholder to the first match.
+        ignoreCase: boolean | undefined;  // Defines if the regex will be case insensitive.
+      }
+  auto-close-ignore-label:
+    required: false
+    description: Optional label name. If present, auto-close rule execution is skipped.
 runs:
   using: node12
   main: dist/index.js

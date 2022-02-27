@@ -1,7 +1,7 @@
 name: Issue moderator test
 on:
   issues:
-    types: [opened]
+    types: [opened, edited, reopened]
   issue_comment:
     types: [created]
 jobs:
@@ -18,3 +18,28 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           duplicate-check-enabled: true
           duplicate-check-label: enhancement
+          auto-close-rules: |
+            [
+              {
+                "type": "title",
+                "regex": ".*Test title.*",
+                "message": "The title was not updated."
+              },
+              {
+                "type": "body",
+                "regex": ".*DELETE THIS SECTION IF YOU HAVE READ AND ACKNOWLEDGED IT.*",
+                "message": "The acknowledgment section was not removed."
+              },
+              {
+                "type": "body",
+                "regex": ".*Test: \\?.*",
+                "message": "The requested information was not filled out."
+              },
+              {
+                "type": "both",
+                "regex":".*(mangago|mangafox|hq\\s*dragon|manga\\s*host).*",
+                "ignoreCase": true,
+                "message": "{match} will not be added back as it is too difficult to maintain"
+              }
+            ]
+          auto-close-ignore-label: do-not-autoclose

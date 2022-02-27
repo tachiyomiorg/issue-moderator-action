@@ -38,7 +38,7 @@ export async function checkForDuplicates() {
   );
 
   if (!hasTheLabel) {
-    core.info('The issue does not have the label defined');
+    core.info('No duplicate check label set, skipping');
     return;
   }
 

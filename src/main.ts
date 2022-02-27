@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 
+import { checkForAutoClose } from './feature/auto-closer';
 import { checkForCommand } from './feature/commands';
 import { checkForDuplicates } from './feature/dupe-check';
 
@@ -13,6 +14,7 @@ async function run() {
     }
 
     if (eventName === 'issues') {
+      await checkForAutoClose();
       await checkForDuplicates();
       return;
     }
