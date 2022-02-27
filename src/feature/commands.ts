@@ -41,9 +41,6 @@ export async function checkForCommand() {
     core.info('Irrelevant action trigger');
     return;
   }
-  if (!payload.sender) {
-    throw new Error('Internal error, no sender provided by GitHub');
-  }
 
   const {
     body: commentBody,

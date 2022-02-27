@@ -6,7 +6,11 @@ import { checkForDuplicates } from './feature/dupe-check';
 
 async function run() {
   try {
-    const { eventName } = github.context;
+    const { eventName, payload } = github.context;
+
+    if (!payload.sender) {
+      throw new Error('Internal error, no sender provided by GitHub');
+    }
 
     if (eventName === 'issues') {
       await checkForDuplicates();

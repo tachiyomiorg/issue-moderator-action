@@ -29,10 +29,6 @@ export async function checkForDuplicates() {
     return;
   }
 
-  if (!payload.sender) {
-    throw new Error('Internal error, no sender provided by GitHub');
-  }
-
   const issue = payload.issue as Issue;
   const labelToCheck = core.getInput('duplicate-check-label', {
     required: true,

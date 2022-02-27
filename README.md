@@ -4,6 +4,8 @@ This action allows the usage of some commands from the organization
 to moderate the issues of a repository. It can also search for duplicate
 URLs in the opened issues and close the new opened issue if needed.
 
+---
+
 ## Installation
 
 To configure the action simply add the following lines to your workflow file:
@@ -11,9 +13,10 @@ To configure the action simply add the following lines to your workflow file:
 ```yml
 name: Moderator
 on:
-  # Add the issues if you want the duplicate URLs check.
   issues:
-    types: [opened]
+    types:
+      # If you want the duplicate URL checker
+      - opened
   issue_comment:
     types: [created]
 jobs:
@@ -26,6 +29,8 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+---
+
 ## Inputs
 
 | Name                      | Description                                        | Default value   |
@@ -36,6 +41,8 @@ jobs:
 | `lock-command`            | Optional lock command text.                        | Lock this issue |
 | `duplicate-check-enabled` | Enable the duplicate URL finder if sets to `true`. |                 |
 | `duplicate-check-label`   | Label of the opened issues to check.               |                 |
+
+---
 
 ## Commands
 
@@ -84,6 +91,8 @@ Usage:
 
 - **Bot-like**: `?lock <off-topic|too heated|resolved|spam>`
 - **Sentence**: `Lock this issue as <off-topic|too heated|resolved|spam>`
+
+---
 
 ## Duplicate URLs check
 
