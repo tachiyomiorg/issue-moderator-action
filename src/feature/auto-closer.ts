@@ -98,15 +98,8 @@ export async function checkForAutoClose() {
       await client.rest.issues.update({
         ...issueMetadata,
         state: 'closed',
+        state_reason: 'not_planned',
       });
-    } else if (payload.action === 'edited') {
-      // Re-open if edited issue is valid and was previously closed by action
-      if (issueData.data.closed_by?.login === 'github-actions[bot]') {
-        await client.rest.issues.update({
-          ...issueMetadata,
-          state: 'open',
-        });
-      }
     }
   } catch (error) {
     core.setFailed(error.message);

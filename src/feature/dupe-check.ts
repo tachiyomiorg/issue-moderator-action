@@ -91,18 +91,29 @@ export async function checkForDuplicates() {
     .join(', ')
     .replace(/, ([^,]*)$/, ' and $1');
 
+  // The 'Duplicate of' keyword only works if its only it in the comment.
+  // We create this separate comment to proper create the issue timeline event.
+  // Reference: https://github.com/githubteacher/github-for-developers-sept-2015/issues/705#issuecomment-380805734
   await client.rest.issues.createComment({
     ...issueMetadata,
-    body: dedent`
-      This issue was closed because it is a duplicate of ${duplicateIssuesText}.
-
-      *This is an automated action. If you think this is a mistake, please comment about it so the issue can be manually reopened if needed.*
-    `,
+    // For now just use the more recent duplicate issue.
+    body: `Duplicate of ${duplicateIssues[0]}`,
   });
 
   await client.rest.issues.update({
     ...issueMetadata,
     state: 'closed',
+    state_reason: 'not_planned',
+  });
+
+  // Also create a more explained comment to the end user.
+  await client.rest.issues.createComment({
+    ...issueMetadata,
+    body: dedent`
+      This issue was closed because it is a duplicate of ${duplicateIssuesText}. That means someone else already requested this website to to be added as an extension before.
+
+      *This is an automated action. If you think this is a mistake, please comment about it so the issue can be reopened if needed.*
+    `,
   });
 }
 
