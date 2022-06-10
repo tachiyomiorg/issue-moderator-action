@@ -91,18 +91,19 @@ export async function checkForDuplicates() {
     .join(', ')
     .replace(/, ([^,]*)$/, ' and $1');
 
-  await client.rest.issues.createComment({
-    ...issueMetadata,
-    body: dedent`
-      This issue was closed because it is a duplicate of ${duplicateIssuesText}.
-
-      *This is an automated action. If you think this is a mistake, please comment about it so the issue can be manually reopened if needed.*
-    `,
-  });
-
   await client.rest.issues.update({
     ...issueMetadata,
     state: 'closed',
+    state_reason: 'not_planned',
+  });
+
+  await client.rest.issues.createComment({
+    ...issueMetadata,
+    body: dedent`
+      This issue was closed because it is a duplicate of ${duplicateIssuesText}. That means someone else already requested this website to to be added as an extension before.
+
+      *This is an automated action. If you think this is a mistake, please comment about it so the issue can be reopened if needed.*
+    `,
   });
 }
 

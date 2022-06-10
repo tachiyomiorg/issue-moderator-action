@@ -155,6 +155,7 @@ async function duplicateIssue(client: GitHubClient, commentBody: string) {
       repo: repo.repo,
       issue_number: issue.number,
       state: 'closed',
+      state_reason: 'not_planned',
     });
 
     core.info(`Issue #${issue.number} closed`);
