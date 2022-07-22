@@ -2,15 +2,9 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { Issue, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
 
-const ALLOWED_ISSUES_ACTIONS = ['opened'];
+import { urlsFromIssueBody } from '../utils';
 
-export const URL_REGEX = /(https?:\/\/)?([\w\-]+\.)+[\w\-]{2,}/gi;
-export const EXCLUSION_LIST = [
-  'tachiyomi.org',
-  'github.com',
-  'user-images.githubusercontent.com',
-  'gist.github.com',
-];
+const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
 // Check if the source request issue is a duplicate.
 export async function checkForDuplicates() {
@@ -102,14 +96,4 @@ export async function checkForDuplicates() {
       .getInput('duplicate-check-comment')
       .replace(/\{duplicateIssuesText\}/g, duplicateIssuesText),
   });
-}
-
-export function urlsFromIssueBody(body: string): string[] {
-  const urls = Array.from(body.matchAll(URL_REGEX))
-    .map((url) => {
-      return url[0].replace(/https?:\/\/(www\.)?/g, '').toLowerCase();
-    })
-    .filter((url) => !EXCLUSION_LIST.includes(url));
-
-  return Array.from(new Set(urls));
 }

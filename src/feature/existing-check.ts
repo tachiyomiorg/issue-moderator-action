@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import { Issue, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
 import axios from 'axios';
 
-import { URL_REGEX, EXCLUSION_LIST, urlsFromIssueBody } from './dupe-check';
+import { urlsFromIssueBody } from '../utils';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
