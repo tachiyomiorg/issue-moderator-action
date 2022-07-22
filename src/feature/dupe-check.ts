@@ -1,12 +1,11 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { Issue, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
-import dedent from 'dedent';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
-const URL_REGEX = /(https?:\/\/)?([\w\-]+\.)+[\w\-]{2,}/gi;
-const EXCLUSION_LIST = [
+export const URL_REGEX = /(https?:\/\/)?([\w\-]+\.)+[\w\-]{2,}/gi;
+export const EXCLUSION_LIST = [
   'tachiyomi.org',
   'github.com',
   'user-images.githubusercontent.com',
@@ -99,15 +98,13 @@ export async function checkForDuplicates() {
 
   await client.rest.issues.createComment({
     ...issueMetadata,
-    body: dedent`
-      This issue was closed because it is a duplicate of ${duplicateIssuesText}. That means someone else already requested this website to to be added as an extension before.
-
-      *This is an automated action. If you think this is a mistake, please comment about it so the issue can be reopened if needed.*
-    `,
+    body: core
+      .getInput('duplicate-check-comment')
+      .replace(/\{duplicateIssuesText\}/g, duplicateIssuesText),
   });
 }
 
-function urlsFromIssueBody(body: string): string[] {
+export function urlsFromIssueBody(body: string): string[] {
   const urls = Array.from(body.matchAll(URL_REGEX))
     .map((url) => {
       return url[0].replace(/https?:\/\/(www\.)?/g, '').toLowerCase();
