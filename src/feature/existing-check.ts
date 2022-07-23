@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import { Issue, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
 import axios from 'axios';
 
-import { urlsFromIssueBody } from '../utils';
+import { cleanUrl, urlsFromIssueBody } from '../utils';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
@@ -47,22 +47,20 @@ export async function checkForExisting() {
   }
 
   const issueUrls = urlsFromIssueBody(issue.body);
-
   if (issueUrls.length === 0) {
     core.info('No URLs found in the issue body');
     return;
   }
 
   const repoJsonUrl = core.getInput('existing-check-repo-url');
-
   if (!repoJsonUrl) {
     core.info('Repository JSON URL not specified, aborting.');
     return;
   }
 
   let repository: Extension[] = [];
-
   try {
+    core.info(`Fetching ${repoJsonUrl}`);
     const { data } = await axios.get<Extension[]>(repoJsonUrl);
     repository = data;
   } catch (_) {
@@ -70,15 +68,13 @@ export async function checkForExisting() {
     return;
   }
 
-  const requestUrl = issueUrls[0].toLowerCase();
-  const existingExtension = repository.find((extension) => {
-    return extension.sources.find((source) => {
-      return source.baseUrl.toLowerCase() === requestUrl;
-    });
-  });
+  const requestUrl = cleanUrl(issueUrls[0]);
+  const existingExtension = repository.find((extension) =>
+    extension.sources.find((source) => cleanUrl(source.baseUrl) === requestUrl),
+  );
 
   if (!existingExtension) {
-    core.info('Existing extension with the URL was not found.');
+    core.info(`Existing extension with the URL "${requestUrl}" was not found.`);
     return;
   }
 

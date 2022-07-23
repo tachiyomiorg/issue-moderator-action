@@ -8,10 +8,11 @@ const EXCLUSION_LIST = [
 
 export function urlsFromIssueBody(body: string): string[] {
   const urls = Array.from(body.matchAll(URL_REGEX))
-    .map((url) => {
-      return url[0].replace(/https?:\/\/(www\.)?/g, '').toLowerCase();
-    })
+    .map((url) => cleanUrl(url[0]))
     .filter((url) => !EXCLUSION_LIST.includes(url));
-
   return Array.from(new Set(urls));
+}
+
+export function cleanUrl(url: string): string {
+  return url.replace(/https?:\/\/(www\.)?/g, '').toLowerCase();
 }
