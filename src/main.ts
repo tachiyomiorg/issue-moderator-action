@@ -3,6 +3,7 @@ import * as github from '@actions/github';
 
 import { checkForAutoClose } from './feature/auto-closer';
 import { checkForCommand } from './feature/commands';
+import { checkForExisting } from './feature/existing-check';
 import { checkForDuplicates } from './feature/dupe-check';
 
 async function run() {
@@ -15,6 +16,7 @@ async function run() {
 
     if (eventName === 'issues') {
       await checkForAutoClose();
+      await checkForExisting();
       await checkForDuplicates();
       return;
     }

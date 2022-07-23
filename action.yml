@@ -29,7 +29,39 @@ inputs:
     required: false
     description: >
       The label of the opened issues that will be check.
-      It's required if you enabled the duplicate finder.
+      It's required if you have enabled the duplicate finder.
+  duplicate-check-comment:
+    required: false
+    description: >
+      The body of the comment when an issue is detected to be a duplicate.
+    default: |
+      This issue was closed because it is a duplicate of {duplicateIssuesText}. That means someone else already requested this website to to be added as an extension before.
+
+      *This is an automated action. If you think this is a mistake, please comment about it so the issue can be reopened if needed.*
+  existing-check-enabled:
+    required: false
+    description: >
+      Control if the action should search the extension repository for existing sources.
+      Set it to 'true' if you want to enable.
+  existing-check-label:
+    required: false
+    description: >
+      The label of the opened issues that will be check.
+      It's required if you have enabled the existing check.
+  existing-check-repo-url:
+    required: false
+    description: >
+      The URL of the JSON extensions repository.
+      It's required if you have enabled the existing check.
+    default: https://raw.githubusercontent.com/tachiyomiorg/tachiyomi-extensions/repo/index.min.json
+  existing-check-comment:
+    required: false
+    description: >
+      The body of the comment when an issue is detected to be of an existing source.
+    default: |
+      This issue was closed because an extension of this website already exists with the name of **{extensionName}**, under the **{extensionLang}** section.
+
+      *This is an automated action. If you think this is a mistake, please comment about it so the issue can be reopened if needed.*
   auto-close-rules:
     required: false
     description: |
