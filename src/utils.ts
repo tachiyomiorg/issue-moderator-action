@@ -14,5 +14,5 @@ export function urlsFromIssueBody(body: string): string[] {
 }
 
 export function cleanUrl(url: string): string {
-  return url.replace(/https?:\/\/(www\.)?/g, '').toLowerCase();
+  return url.replace(/(https?:\/\/)?(www\.)?/g, '').toLowerCase();
 }
