@@ -19,11 +19,9 @@ interface Source {
 
 // Check if the source request issue is from an existing extension.
 export async function checkForExisting() {
-  const duplicateCheckEnabled = core.getInput(
-    'dupliexistingcate-check-enabled',
-  );
+  const existingCheckEnabled = core.getInput('existing-check-enabled');
 
-  if (duplicateCheckEnabled !== 'true') {
+  if (existingCheckEnabled !== 'true') {
     core.info('The existing check is disabled');
     return;
   }
