@@ -1,11 +1,15 @@
 name: Issue moderator test
+
 on:
   issues:
     types: [opened, edited, reopened]
   issue_comment:
     types: [created]
+
 jobs:
   moderate:
+    permissions:
+      issues: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
