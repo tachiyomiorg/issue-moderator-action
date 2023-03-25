@@ -9,7 +9,6 @@ const ALLOWED_ISSUES_ACTIONS = ['opened'];
 // Check if the source request issue is a duplicate.
 export async function checkForDuplicates() {
   const duplicateCheckEnabled = core.getInput('duplicate-check-enabled');
-
   if (duplicateCheckEnabled !== 'true') {
     core.info('The duplicate check is disabled');
     return;
@@ -23,20 +22,24 @@ export async function checkForDuplicates() {
   }
 
   const issue = payload.issue as Issue;
-  const labelToCheck = core.getInput('duplicate-check-label', {
-    required: true,
-  });
-  const hasTheLabel = issue.labels?.find(
-    (label) => label.name === labelToCheck,
-  );
 
-  if (!hasTheLabel) {
+  let labelsToCheck = [];
+  let labelsToCheckInput = core.getInput('duplicate-check-labels');
+  if (labelsToCheckInput) {
+    labelsToCheck = JSON.parse(labelsToCheckInput);
+  } else {
+    labelsToCheck = [core.getInput('duplicate-check-label')];
+  }
+
+  const hasRelevantLabel = issue.labels?.find((label) =>
+    labelsToCheck.includes(label.name),
+  );
+  if (!hasRelevantLabel) {
     core.info('No duplicate check label set, skipping');
     return;
   }
 
   const issueUrls = urlsFromIssueBody(issue.body);
-
   if (issueUrls.length === 0) {
     core.info('No URLs found in the issue body');
     return;
@@ -52,7 +55,7 @@ export async function checkForDuplicates() {
     owner: repo.owner,
     repo: repo.repo,
     state: 'open',
-    labels: labelToCheck,
+    labels: labelsToCheck.join(','),
     per_page: 100,
   });
 

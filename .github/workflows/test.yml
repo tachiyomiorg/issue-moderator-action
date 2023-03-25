@@ -21,9 +21,11 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           duplicate-check-enabled: true
-          duplicate-check-label: enhancement
+          duplicate-check-labels: |
+            ["enhancement"]
           existing-check-enabled: true
-          existing-check-label: enhancement
+          existing-check-labels: |
+            ["enhancement"]
           auto-close-rules: |
             [
               {

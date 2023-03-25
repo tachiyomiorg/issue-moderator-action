@@ -43,10 +43,10 @@ jobs:
 | `edit-title-command`      | Optional edit issue title command text.                                                         | Edit title to   |
 | `lock-command`            | Optional lock command text.                                                                     | Lock this issue |
 | `duplicate-check-enabled` | Enable the duplicate URL finder if sets to `true`.                                              |                 |
-| `duplicate-check-label`   | Label of the opened issues to check.                                                            |                 |
+| `duplicate-check-labels`  | Labels of the opened issues to check.                                                           |                 |
 | `duplicate-check-comment` | Comment body when the issue was detected to be a duplicate.                                     |                 |
 | `existing-check-enabled`  | Enable the existing source check if sets to `true`.                                             |                 |
-| `existing-check-label`    | Label of the opened issues to do the check.                                                     |                 |
+| `existing-check-labels`   | Labels of the opened issues to do the check.                                                    |                 |
 | `existing-check-repo-url` | URL of the JSON extension repository.                                                           |                 |
 | `existing-check-comment`  | Comment body when the issue was detected to be of an existing source.                           |                 |
 | `auto-close-rules`        | A JSON-compliant string containing a list of rules, where a rule consists of the content below. |                 |

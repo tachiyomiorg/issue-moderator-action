@@ -20,7 +20,6 @@ interface Source {
 // Check if the source request issue is from an existing extension.
 export async function checkForExisting() {
   const existingCheckEnabled = core.getInput('existing-check-enabled');
-
   if (existingCheckEnabled !== 'true') {
     core.info('The existing check is disabled');
     return;
@@ -34,14 +33,19 @@ export async function checkForExisting() {
   }
 
   const issue = payload.issue as Issue;
-  const labelToCheck = core.getInput('existing-check-label', {
-    required: true,
-  });
-  const hasTheLabel = issue.labels?.find(
-    (label) => label.name === labelToCheck,
-  );
 
-  if (!hasTheLabel) {
+  let labelsToCheck = [];
+  let labelsToCheckInput = core.getInput('existing-check-labels');
+  if (labelsToCheckInput) {
+    labelsToCheck = JSON.parse(labelsToCheckInput);
+  } else {
+    labelsToCheck = [core.getInput('existing-check-label')];
+  }
+
+  const hasRelevantLabel = issue.labels?.find((label) =>
+    labelsToCheck.includes(label.name),
+  );
+  if (!hasRelevantLabel) {
     core.info('No existing check label set, skipping');
     return;
   }
@@ -72,7 +76,6 @@ export async function checkForExisting() {
   const existingExtension = repository.find((extension) =>
     extension.sources.find((source) => cleanUrl(source.baseUrl) === requestUrl),
   );
-
   if (!existingExtension) {
     core.info(`Existing extension with the URL "${requestUrl}" was not found.`);
     return;
