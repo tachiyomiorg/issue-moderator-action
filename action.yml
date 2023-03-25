@@ -4,10 +4,14 @@ author: tachiyomiorg
 branding:
   icon: alert-circle
   color: red
+runs:
+  using: node16
+  main: dist/index.js
 inputs:
   repo-token:
     required: true
     description: GitHub token
+
   edit-title-command:
     required: false
     default: Edit title to
@@ -20,16 +24,16 @@ inputs:
     required: false
     default: 'Duplicate of #'
     description: Command to close a duplicate issue
+
   duplicate-check-enabled:
     required: false
     description: >
       Control if the action should search for duplicate URLs in opened issues.
-      Set it to 'true' if you want to enable.
   duplicate-check-label:
     required: false
     description: >
-      The label of the opened issues that will be check.
-      It's required if you have enabled the duplicate finder.
+      The label of the opened issues that will be checked.
+      Required if you `duplicate-check-enabled` is enabled.
   duplicate-check-comment:
     required: false
     description: >
@@ -38,21 +42,21 @@ inputs:
       This issue was closed because it is a duplicate of {duplicateIssuesText}. That means someone else already requested this website to to be added as an extension before.
 
       *This is an automated action. If you think this is a mistake, please comment about it so the issue can be reopened if needed.*
+
   existing-check-enabled:
     required: false
     description: >
       Control if the action should search the extension repository for existing sources.
-      Set it to 'true' if you want to enable.
   existing-check-label:
     required: false
     description: >
-      The label of the opened issues that will be check.
-      It's required if you have enabled the existing check.
+      The label of the opened issues that will be checked.
+      Required if `existing-check-enabled` is enabled.
   existing-check-repo-url:
     required: false
     description: >
       The URL of the JSON extensions repository.
-      It's required if you have enabled the existing check.
+      Required if `existing-check-enabled` is enabled.
     default: https://raw.githubusercontent.com/tachiyomiorg/tachiyomi-extensions/repo/index.min.json
   existing-check-comment:
     required: false
@@ -62,6 +66,7 @@ inputs:
       This issue was closed because an extension of this website already exists with the name of **{extensionName}**, under the **{extensionLang}** section.
 
       *This is an automated action. If you think this is a mistake, please comment about it so the issue can be reopened if needed.*
+
   auto-close-rules:
     required: false
     description: |
@@ -77,6 +82,3 @@ inputs:
   auto-close-ignore-label:
     required: false
     description: Optional label name. If present, auto-close rule execution is skipped.
-runs:
-  using: node16
-  main: dist/index.js
