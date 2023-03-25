@@ -31,7 +31,7 @@ export async function checkForDuplicates() {
     labelsToCheck = [core.getInput('duplicate-check-label')];
   }
 
-  const hasRelevantLabel = issue.labels?.find((label) =>
+  const hasRelevantLabel = issue.labels?.some((label) =>
     labelsToCheck.includes(label.name),
   );
   if (!hasRelevantLabel) {
@@ -51,13 +51,18 @@ export async function checkForDuplicates() {
 
   const { repo } = github.context;
 
-  const allOpenIssues = await client.paginate(client.rest.issues.listForRepo, {
-    owner: repo.owner,
-    repo: repo.repo,
-    state: 'open',
-    labels: labelsToCheck.join(','),
-    per_page: 100,
-  });
+  const results = await Promise.all(
+    labelsToCheck.map((label) =>
+      client.paginate(client.rest.issues.listForRepo, {
+        owner: repo.owner,
+        repo: repo.repo,
+        state: 'open',
+        labels: label,
+        per_page: 100,
+      }),
+    ),
+  );
+  const allOpenIssues = results.flat();
 
   const duplicateIssues = allOpenIssues
     .map((currIssue) => ({

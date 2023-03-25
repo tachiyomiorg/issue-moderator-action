@@ -22,10 +22,10 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           duplicate-check-enabled: true
           duplicate-check-labels: |
-            ["enhancement"]
+            ["enhancement", "question"]
           existing-check-enabled: true
           existing-check-labels: |
-            ["enhancement"]
+            ["enhancement", "question"]
           auto-close-rules: |
             [
               {

@@ -42,7 +42,7 @@ export async function checkForExisting() {
     labelsToCheck = [core.getInput('existing-check-label')];
   }
 
-  const hasRelevantLabel = issue.labels?.find((label) =>
+  const hasRelevantLabel = issue.labels?.some((label) =>
     labelsToCheck.includes(label.name),
   );
   if (!hasRelevantLabel) {
