@@ -118,20 +118,20 @@
   "resolved" "https://registry.npmjs.org/@octokit/webhooks-definitions/-/webhooks-definitions-3.67.3.tgz"
   "version" "3.67.3"
 
-"@tsconfig/node18@^1.0.1":
-  "integrity" "sha512-sNFeK6X2ATlhlvzyH4kKYQlfHXE2f2/wxtB9ClvYXevWpmwkUT7VaSrjIN9E76Qebz8qP5JOJJ9jD3QoD/Z9TA=="
-  "resolved" "https://registry.npmjs.org/@tsconfig/node18/-/node18-1.0.1.tgz"
-  "version" "1.0.1"
+"@tsconfig/node16@^1.0.3":
+  "integrity" "sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ=="
+  "resolved" "https://registry.npmjs.org/@tsconfig/node16/-/node16-1.0.3.tgz"
+  "version" "1.0.3"
 
 "@types/dedent@0.7.0":
   "integrity" "sha512-EGlKlgMhnLt/cM4DbUSafFdrkeJoC9Mvnj0PUCU7tFmTjMjNRT957kXCx0wYm3JuEq4o4ZsS5vG+NlkM2DMd2A=="
   "resolved" "https://registry.npmjs.org/@types/dedent/-/dedent-0.7.0.tgz"
   "version" "0.7.0"
 
-"@types/node@18.15.11":
-  "integrity" "sha512-E5Kwq2n4SbMzQOn6wnmBjuK9ouqlURrcZDVfbo9ftDDTFt3nk7ZKK4GMOzoYgnpQJKcxwQw+lGaBvvlMo0qN/Q=="
-  "resolved" "https://registry.npmjs.org/@types/node/-/node-18.15.11.tgz"
-  "version" "18.15.11"
+"@types/node@16.18.23":
+  "integrity" "sha512-XAMpaw1s1+6zM+jn2tmw8MyaRDIJfXxqmIQIS0HfoGYPuf7dUWeiUKopwq13KFX9lEp1+THGtlaaYx39Nxr58g=="
+  "resolved" "https://registry.npmjs.org/@types/node/-/node-16.18.23.tgz"
+  "version" "16.18.23"
 
 "@vercel/ncc@0.36.1":
   "integrity" "sha512-S4cL7Taa9yb5qbv+6wLgiKVZ03Qfkc4jGRuiUQMQ8HGBD5pcNRnHeYM33zBvJE4/zJGjJJ8GScB+WmTsn9mORw=="
