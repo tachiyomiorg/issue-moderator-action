@@ -8,6 +8,14 @@ describe('urlsFromIssueBody', () => {
       [
         ['foo https://mangadex.org bar', ['mangadex.org']],
         [
+          'foo https://MANGADEX.ORG google.co.UK bar',
+          ['mangadex.org', 'google.co.uk'],
+        ],
+        [
+          'foo http://stupidlylongtld.NORTHWESTERNMUTUAL',
+          ['stupidlylongtld.northwesternmutual'],
+        ],
+        [
           `### Source information and language
 
     Sunshine Butterfly Scans 1.4.29 (English)
