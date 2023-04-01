@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Issue, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
+import { Issue } from '@octokit/webhooks-definitions/schema';
 
 import { urlsFromIssueBody } from '../utils';
 
@@ -14,16 +14,16 @@ export async function checkForDuplicates() {
     return;
   }
 
-  const payload = github.context.payload as IssuesOpenedEvent;
+  const payload = github.context.payload;
 
-  if (!ALLOWED_ISSUES_ACTIONS.includes(payload.action) || !payload.issue) {
+  if (!payload.action || !payload.issue || !ALLOWED_ISSUES_ACTIONS.includes(payload.action)) {
     core.info('Irrelevant action trigger');
     return;
   }
 
   const issue = payload.issue as Issue;
 
-  let labelsToCheck = [];
+  let labelsToCheck: string[] = [];
   let labelsToCheckInput = core.getInput('duplicate-check-labels');
   if (labelsToCheckInput) {
     labelsToCheck = JSON.parse(labelsToCheckInput);
@@ -67,7 +67,7 @@ export async function checkForDuplicates() {
   const duplicateIssues = allOpenIssues
     .map((currIssue) => ({
       number: currIssue.number,
-      urls: urlsFromIssueBody(currIssue.body),
+      urls: urlsFromIssueBody(currIssue.body ?? ""),
     }))
     .filter((currIssue) => {
       return (

@@ -25,7 +25,7 @@ async function run() {
       await checkForCommand();
       return;
     }
-  } catch (error) {
+  } catch (error: any) {
     core.setFailed(error.message);
   }
 }

@@ -114,7 +114,7 @@ async function minimizeComment(client: GitHubClient, commentNodeId: string) {
 
 async function lockIssue(client: GitHubClient) {
   const { issue, payload, repo } = github.context;
-  const commentBody: string = payload.comment.body;
+  const commentBody: string = payload.comment?.body ?? "";
 
   const lockReasons = ['off-topic', 'too heated', 'resolved', 'spam'];
 
@@ -129,7 +129,7 @@ async function lockIssue(client: GitHubClient) {
     lock_reason: reason ? (reason as LockReason) : undefined,
   });
 
-  core.info(`Issue #${payload.issue.number} locked`);
+  core.info(`Issue #${payload.issue!.number} locked`);
 }
 
 async function duplicateIssue(client: GitHubClient, commentBody: string) {
@@ -164,7 +164,7 @@ async function duplicateIssue(client: GitHubClient, commentBody: string) {
 
 async function editIssueTitle(client: GitHubClient) {
   const { issue, payload, repo } = github.context;
-  const commentBody: string = payload.comment.body;
+  const commentBody: string = payload.comment?.body ?? "";
 
   // Get the new title inside a double quotes string style,
   // with support to escaping.
@@ -191,5 +191,5 @@ async function editIssueTitle(client: GitHubClient) {
     title: newTitle,
   });
 
-  core.info(`Title of the issue #${payload.issue.number} edited`);
+  core.info(`Title of the issue #${payload.issue!.number} edited`);
 }

@@ -15,7 +15,7 @@ export async function checkForAutoClose() {
     const { issue, payload } = github.context;
 
     // Do nothing if it's wasn't a relevant action or it's not an issue
-    if (ALLOWED_ACTIONS.indexOf(payload.action) === -1 || !payload.issue) {
+    if (!payload.action || !payload.issue || ALLOWED_ACTIONS.indexOf(payload.action) === -1) {
       return;
     }
 
@@ -54,9 +54,9 @@ export async function checkForAutoClose() {
         let texts: string[] = [payload?.issue?.title];
 
         if (rule.type === 'body') {
-          texts = [payload?.issue?.body];
+          texts = [payload?.issue?.body ?? ""];
         } else if (rule.type === 'both') {
-          texts.push(payload?.issue?.body);
+          texts.push(payload?.issue?.body ?? "");
         }
 
         const regexMatches = check(rule.regex, texts, rule.ignoreCase);
@@ -101,7 +101,7 @@ export async function checkForAutoClose() {
         state_reason: 'not_planned',
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     core.setFailed(error.message);
   }
 }
@@ -119,7 +119,7 @@ function check(
   patternString: string,
   texts: string[] | undefined,
   ignoreCase: boolean = false,
-): Array<RegExpMatchArray> {
+): RegExpMatchArray[] {
   const pattern = new RegExp(patternString, ignoreCase ? 'i' : undefined);
   return texts
     ?.map((text) => {
@@ -131,7 +131,7 @@ function check(
         .replace(/[\u0300-\u036f]/g, '')
         .match(pattern);
     })
-    ?.filter(Boolean);
+    ?.filter(Boolean) as RegExpMatchArray[];
 }
 
 function evalTemplate(template: string, params: any) {

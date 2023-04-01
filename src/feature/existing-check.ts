@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Issue, IssuesOpenedEvent } from '@octokit/webhooks-definitions/schema';
+import { Issue } from '@octokit/webhooks-definitions/schema';
 import axios from 'axios';
 
 import { cleanUrl, urlsFromIssueBody } from '../utils';
@@ -25,16 +25,16 @@ export async function checkForExisting() {
     return;
   }
 
-  const payload = github.context.payload as IssuesOpenedEvent;
+  const payload = github.context.payload;
 
-  if (!ALLOWED_ISSUES_ACTIONS.includes(payload.action) || !payload.issue) {
+  if (!payload.action || !payload.issue || !ALLOWED_ISSUES_ACTIONS.includes(payload.action)) {
     core.info('Irrelevant action trigger');
     return;
   }
 
   const issue = payload.issue as Issue;
 
-  let labelsToCheck = [];
+  let labelsToCheck: string[] = [];
   let labelsToCheckInput = core.getInput('existing-check-labels');
   if (labelsToCheckInput) {
     labelsToCheck = JSON.parse(labelsToCheckInput);
@@ -112,7 +112,7 @@ export async function checkForExisting() {
 }
 
 function findLangName(langCode: string): string {
-  const exceptions = {
+  const exceptions: Record<string, string> = {
     all: 'All',
     other: 'Other',
   };
@@ -122,5 +122,5 @@ function findLangName(langCode: string): string {
   }
 
   const displayNames = new Intl.DisplayNames(['en'], { type: 'language' });
-  return displayNames.of(langCode);
+  return displayNames.of(langCode)!;
 }

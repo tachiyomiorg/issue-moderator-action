@@ -1,11 +1,9 @@
 {
+  "extends": "@tsconfig/node18",
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
     "outDir": "lib",
-    "rootDir": "src",
-    "esModuleInterop": true
+    "rootDir": "src"
   },
-  "include": ["src/**/*"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }
