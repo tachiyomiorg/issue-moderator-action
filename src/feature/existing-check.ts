@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import { Issue } from '@octokit/webhooks-definitions/schema';
 import axios from 'axios';
 
-import { cleanUrl, urlsFromIssueBody } from '../utils';
+import { cleanUrl, urlsFromIssueBody } from '../util/urls';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
@@ -27,7 +27,11 @@ export async function checkForExisting() {
 
   const payload = github.context.payload;
 
-  if (!payload.action || !payload.issue || !ALLOWED_ISSUES_ACTIONS.includes(payload.action)) {
+  if (
+    !payload.action ||
+    !payload.issue ||
+    !ALLOWED_ISSUES_ACTIONS.includes(payload.action)
+  ) {
     core.info('Irrelevant action trigger');
     return;
   }

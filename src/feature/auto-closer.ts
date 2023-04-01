@@ -15,7 +15,11 @@ export async function checkForAutoClose() {
     const { issue, payload } = github.context;
 
     // Do nothing if it's wasn't a relevant action or it's not an issue
-    if (!payload.action || !payload.issue || ALLOWED_ACTIONS.indexOf(payload.action) === -1) {
+    if (
+      !payload.action ||
+      !payload.issue ||
+      ALLOWED_ACTIONS.indexOf(payload.action) === -1
+    ) {
       return;
     }
 
@@ -54,9 +58,9 @@ export async function checkForAutoClose() {
         let texts: string[] = [payload?.issue?.title];
 
         if (rule.type === 'body') {
-          texts = [payload?.issue?.body ?? ""];
+          texts = [payload?.issue?.body ?? ''];
         } else if (rule.type === 'both') {
-          texts.push(payload?.issue?.body ?? "");
+          texts.push(payload?.issue?.body ?? '');
         }
 
         const regexMatches = check(rule.regex, texts, rule.ignoreCase);

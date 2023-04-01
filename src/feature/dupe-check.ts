@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { Issue } from '@octokit/webhooks-definitions/schema';
 
-import { urlsFromIssueBody } from '../utils';
+import { urlsFromIssueBody } from '../util/urls';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
@@ -16,7 +16,11 @@ export async function checkForDuplicates() {
 
   const payload = github.context.payload;
 
-  if (!payload.action || !payload.issue || !ALLOWED_ISSUES_ACTIONS.includes(payload.action)) {
+  if (
+    !payload.action ||
+    !payload.issue ||
+    !ALLOWED_ISSUES_ACTIONS.includes(payload.action)
+  ) {
     core.info('Irrelevant action trigger');
     return;
   }
@@ -67,7 +71,7 @@ export async function checkForDuplicates() {
   const duplicateIssues = allOpenIssues
     .map((currIssue) => ({
       number: currIssue.number,
-      urls: urlsFromIssueBody(currIssue.body ?? ""),
+      urls: urlsFromIssueBody(currIssue.body ?? ''),
     }))
     .filter((currIssue) => {
       return (
