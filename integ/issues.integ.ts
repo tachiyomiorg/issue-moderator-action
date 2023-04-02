@@ -18,7 +18,7 @@ beforeAll(async () => {
     body: `This is used for testing the duplicate issue check.
 
 Please add https://foobar.com/!`,
-    labels: ['enhancement', 'do-not-autoclose'],
+    labels: ['enhancement', 'do-not-autoclose', 'test'],
   });
 
   baseDuplicateIssueNumber = createdIssue.data.number;
@@ -39,7 +39,7 @@ test('Issue opened with duplicate URL gets automatically closed', async () => {
     repo,
     title: '[Test] This should be closed as a duplicate',
     body: 'Please add https://foobar.com/!',
-    labels: ['enhancement'],
+    labels: ['enhancement', 'test'],
   });
 
   let issue: Awaited<ReturnType<typeof octokit.issues.get>> | undefined;
