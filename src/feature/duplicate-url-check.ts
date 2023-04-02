@@ -5,14 +5,12 @@ import { Issue, IssuesEvent } from '@octokit/webhooks-definitions/schema';
 import { addDuplicateLabel, shouldIgnore } from '../util/issues';
 import { urlsFromIssueBody } from '../util/urls';
 
-const ALLOWED_ISSUES_ACTIONS = ['opened'];
-
 /**
  * Check if other open issues have the same URL(s).
  */
 export async function checkForDuplicateUrls() {
   const payload = github.context.payload as IssuesEvent;
-  if (!ALLOWED_ISSUES_ACTIONS.includes(payload.action)) {
+  if (!['opened'].includes(payload.action)) {
     core.info('Irrelevant action trigger');
     return;
   }

@@ -12,15 +12,13 @@ interface Rule {
   labels?: string[];
 }
 
-const ALLOWED_ACTIONS = ['opened', 'edited', 'reopened'];
-
 /**
  * Check if the issue should be automatically closed based on defined rules.
  */
 export async function checkForAutoClose() {
   try {
     const payload = github.context.payload as IssuesEvent;
-    if (!ALLOWED_ACTIONS.includes(payload.action)) {
+    if (!['opened', 'edited', 'reopened'].includes(payload.action)) {
       return;
     }
 
