@@ -22,7 +22,7 @@ interface Source {
 export async function checkForExisting() {
   const existingCheckEnabled = core.getInput('existing-check-enabled');
   if (existingCheckEnabled !== 'true') {
-    core.info('The existing check is disabled');
+    core.info('SKIP: the existing source check is disabled');
     return;
   }
 
@@ -61,19 +61,17 @@ export async function checkForExisting() {
     return;
   }
 
-  const repoJsonUrl = core.getInput('existing-check-repo-url');
-  if (!repoJsonUrl) {
-    core.info('Repository JSON URL not specified, aborting.');
-    return;
-  }
+  const repoJsonUrl = core.getInput('existing-check-repo-url', {
+    required: true,
+  });
 
   let repository: Extension[] = [];
   try {
-    core.info(`Fetching ${repoJsonUrl}`);
+    core.debug(`Fetching ${repoJsonUrl}`);
     const { data } = await axios.get<Extension[]>(repoJsonUrl);
     repository = data;
   } catch (_) {
-    core.info('Failed to fetch the repository JSON, aborting.');
+    core.error('Failed to fetch the repository JSON, aborting.');
     return;
   }
 
