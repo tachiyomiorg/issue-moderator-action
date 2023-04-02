@@ -10,7 +10,7 @@
   "main": "dist/index.js",
   "scripts": {
     "format": "prettier --write .",
-    "test": "vitest --run --config vitest.config.unit.ts",
+    "test": "vitest --run",
     "test:integ": "vitest --config vitest.config.integ.ts",
     "build": "ncc build src/main.ts --minify",
     "prepare": "npm run format && npm run test && npm run build"
