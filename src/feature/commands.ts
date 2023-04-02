@@ -96,21 +96,25 @@ export async function checkForCommand() {
 async function minimizeComment(client: GitHubClient, commentNodeId: string) {
   // Use the GitHub GraphQL API since the REST API does not
   // provide the minimize/hide comment method.
-  await client.graphql(
-    `
-      mutation MinimizeComment($input: MinimizeCommentInput!) {
-        minimizeComment(input: $input) {
-          clientMutationId
+  try {
+    await client.graphql(
+      `
+        mutation MinimizeComment($input: MinimizeCommentInput!) {
+          minimizeComment(input: $input) {
+            clientMutationId
+          }
         }
-      }
-    `,
-    {
-      input: {
-        classifier: 'RESOLVED',
-        subjectId: commentNodeId,
+      `,
+      {
+        input: {
+          classifier: 'RESOLVED',
+          subjectId: commentNodeId,
+        },
       },
-    },
-  );
+    );
+  } catch (error: any) {
+    core.warning(`Failed to minimize comment: ${error.message}`);
+  }
 }
 
 async function lockIssue(client: GitHubClient) {
