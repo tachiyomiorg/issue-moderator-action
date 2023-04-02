@@ -26,8 +26,9 @@ export async function closeDuplicateIssue(
 
   const issueData = await client.rest.issues.get(issueMetadata);
 
+  await addDuplicateLabel(client, issueMetadata);
+
   if (issueData.data.state === 'open') {
-    await addDuplicateLabel(client, issueMetadata);
     await client.rest.issues.update({
       owner: repo.owner,
       repo: repo.repo,
