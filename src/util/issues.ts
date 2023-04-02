@@ -1,4 +1,12 @@
 import * as core from '@actions/core';
+import { GitHub } from '@actions/github/lib/utils';
+
+type GitHubClient = InstanceType<typeof GitHub>;
+interface IssueParameters {
+  owner: string;
+  repo: string;
+  issue_number: number;
+}
 
 export async function shouldIgnore(
   labels: string[] | undefined,
@@ -15,4 +23,30 @@ export async function shouldIgnore(
   }
 
   return false;
+}
+
+export async function addDuplicateLabel(
+  client: GitHubClient,
+  params: IssueParameters,
+) {
+  const label = core.getInput('duplicate-label');
+  if (!label) {
+    return;
+  }
+  await addLabels(client, params, [label]);
+}
+
+export async function addLabels(
+  client: GitHubClient,
+  params: IssueParameters,
+  labels: string[],
+) {
+  if (labels.length == 0) {
+    return;
+  }
+  await client.rest.issues.addLabels({
+    ...params,
+    labels,
+  });
+  core.info(`Added labels: ${labels}`);
 }

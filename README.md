@@ -39,9 +39,10 @@ jobs:
 
 ### Base
 
-| Name         | Description         |
-| ------------ | ------------------- |
-| `repo-token` | GitHub access token |
+| Name              | Description                                                |
+| ----------------- | ---------------------------------------------------------- |
+| `repo-token`      | GitHub access token                                        |
+| `duplicate-label` | Label to add on duplicate command and auto duplicate check |
 
 ### Auto closers
 

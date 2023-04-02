@@ -2,7 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { Issue } from '@octokit/webhooks-definitions/schema';
 
-import { shouldIgnore } from '../util/issues';
+import { addDuplicateLabel, shouldIgnore } from '../util/issues';
 import { urlsFromIssueBody } from '../util/urls';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
@@ -109,4 +109,6 @@ export async function checkForDuplicates() {
       .getInput('duplicate-check-comment')
       .replace(/\{duplicateIssuesText\}/g, duplicateIssuesText),
   });
+
+  await addDuplicateLabel(client, issueMetadata);
 }

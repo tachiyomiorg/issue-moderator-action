@@ -1,4 +1,4 @@
-const URL_REGEX = /(https?:\/\/)?([\w\-]+\.)+[a-z]{2,18}/gi;
+const URL_REGEX = /(?:https?:\/\/)?(?:[-\w]+\.)+[a-z]{2,18}/gi;
 const EXCLUSION_LIST = [
   'tachiyomi.org',
   'github.com',
