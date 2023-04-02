@@ -17,8 +17,13 @@ export async function shouldIgnore(
 
   const ignoreLabel: string = core.getInput('auto-close-ignore-label');
   if (ignoreLabel) {
-    core.info(`SKIP: ignoring issue with label ${ignoreLabel}`);
-    return !!labels.find((label: string) => label === ignoreLabel);
+    const hasIgnoreLabel = !!labels.find(
+      (label: string) => label === ignoreLabel,
+    );
+    if (hasIgnoreLabel) {
+      core.info(`SKIP: ignoring issue with label ${ignoreLabel}`);
+      return true;
+    }
   }
 
   return false;

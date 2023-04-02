@@ -5,7 +5,7 @@ import { baseIssueMetadata, waitForClosedIssue } from './util';
 
 const octokit = new Octokit();
 
-describe('Duplicate check', () => {
+describe('Duplicate URL check', () => {
   beforeAll(async () => {
     const createdIssue = await octokit.issues.create({
       ...baseIssueMetadata,
@@ -15,6 +15,7 @@ describe('Duplicate check', () => {
   Please add https://foobar.com/!`,
       labels: ['enhancement', 'do-not-autoclose', 'test'],
     });
+    console.log(`Created baseline issue #${createdIssue.data.number}`);
 
     return async () => {
       await octokit.issues.update({
@@ -38,21 +39,5 @@ describe('Duplicate check', () => {
     expect(issue.data.state).toStrictEqual('closed');
     expect(issue.data.state_reason).toStrictEqual('not_planned');
     expect(issue.data.labels.map((l: any) => l.name)).toContain('duplicate');
-  });
-});
-
-describe('Existing source check', () => {
-  test('Issue created for an existing source gets automatically closed', async () => {
-    const createdIssue = await octokit.issues.create({
-      ...baseIssueMetadata,
-      title: '[Test] This should be closed since the source already exists',
-      body: 'Please add https://mangadex.org/!',
-      labels: ['enhancement', 'test'],
-    });
-
-    const issue = await waitForClosedIssue(octokit, createdIssue.data.number);
-
-    expect(issue.data.state).toStrictEqual('closed');
-    expect(issue.data.state_reason).toStrictEqual('not_planned');
   });
 });

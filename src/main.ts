@@ -6,6 +6,12 @@ import { checkForCommand } from './feature/commands';
 import { checkForExisting } from './feature/existing-check';
 import { checkForDuplicates } from './feature/dupe-check';
 
+async function withLogGroup(name: string, fn: () => Promise<void>) {
+  core.startGroup(name);
+  await fn();
+  core.endGroup();
+}
+
 async function run() {
   try {
     const { eventName, payload } = github.context;
@@ -15,14 +21,14 @@ async function run() {
     }
 
     if (eventName === 'issues') {
-      await checkForAutoClose();
-      await checkForExisting();
-      await checkForDuplicates();
+      await withLogGroup('Auto closer', checkForAutoClose);
+      await withLogGroup('Existing source checker', checkForExisting);
+      await withLogGroup('Duplicate URL checker', checkForDuplicates);
       return;
     }
 
     if (eventName === 'issue_comment') {
-      await checkForCommand();
+      await withLogGroup('Command', checkForCommand);
       return;
     }
   } catch (error: any) {

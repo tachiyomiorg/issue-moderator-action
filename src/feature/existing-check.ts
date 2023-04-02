@@ -67,7 +67,7 @@ export async function checkForExisting() {
 
   let repository: Extension[] = [];
   try {
-    core.debug(`Fetching ${repoJsonUrl}`);
+    core.info(`Fetching ${repoJsonUrl}`);
     const { data } = await axios.get<Extension[]>(repoJsonUrl);
     repository = data;
   } catch (_) {
