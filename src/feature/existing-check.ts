@@ -3,6 +3,7 @@ import * as github from '@actions/github';
 import { Issue } from '@octokit/webhooks-definitions/schema';
 import axios from 'axios';
 
+import { shouldIgnore } from '../util/issues';
 import { cleanUrl, urlsFromIssueBody } from '../util/urls';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
@@ -37,6 +38,10 @@ export async function checkForExisting() {
   }
 
   const issue = payload.issue as Issue;
+
+  if (await shouldIgnore(issue)) {
+    return;
+  }
 
   let labelsToCheck: string[] = [];
   let labelsToCheckInput = core.getInput('existing-check-labels');

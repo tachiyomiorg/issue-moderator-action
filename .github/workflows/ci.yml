@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   build:
@@ -26,3 +27,7 @@ jobs:
           cache: npm
 
       - run: npm install
+
+      - run: npm run test:integ
+        env:
+          GITHUB_TOKEN: ${{ secrets.INTEG_TEST_ACCESS_TOKEN }}

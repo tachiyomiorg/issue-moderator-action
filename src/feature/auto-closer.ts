@@ -1,5 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import { shouldIgnore } from '../util/issues';
 
 interface Rule {
   type: 'title' | 'body' | 'both';
@@ -42,14 +43,8 @@ export async function checkForAutoClose() {
 
     const issueData = await client.rest.issues.get(issueMetadata);
 
-    const ignoreLabel: string = core.getInput('auto-close-ignore-label');
-    if (ignoreLabel) {
-      if (
-        issueData.data.labels.find((label: any) => label.name === ignoreLabel)
-      ) {
-        core.info(`Ignoring issue with label ${ignoreLabel}`);
-        return;
-      }
+    if (await shouldIgnore(issueData)) {
+      return;
     }
 
     const parsedRules = JSON.parse(rules) as Rule[];
