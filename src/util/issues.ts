@@ -1,7 +1,6 @@
 import * as core from '@actions/core';
-import { GitHub } from '@actions/github/lib/utils';
+import { GitHubClient } from '../types';
 
-type GitHubClient = InstanceType<typeof GitHub>;
 interface IssueParameters {
   owner: string;
   repo: string;

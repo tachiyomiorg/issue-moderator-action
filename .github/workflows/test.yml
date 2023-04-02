@@ -20,6 +20,7 @@ jobs:
         uses: ./
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          duplicate-label: duplicate
           duplicate-check-enabled: true
           duplicate-check-labels: |
             ["enhancement", "question"]
@@ -47,7 +48,8 @@ jobs:
                 "type": "both",
                 "regex":".*(mangago|mangafox|hq\\s*dragon|manga\\s*host).*",
                 "ignoreCase": true,
-                "message": "{match} will not be added back as it is too difficult to maintain"
+                "message": "{match} will not be added back as it is too difficult to maintain",
+                "labels": ["wontfix", "invalid"]
               }
             ]
           auto-close-ignore-label: do-not-autoclose
