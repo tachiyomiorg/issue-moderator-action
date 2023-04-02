@@ -32,19 +32,15 @@ export async function checkForDuplicates() {
     return;
   }
 
-  let labelsToCheck: string[] = [];
-  let labelsToCheckInput = core.getInput('duplicate-check-labels');
-  if (labelsToCheckInput) {
-    labelsToCheck = JSON.parse(labelsToCheckInput);
-  } else {
-    labelsToCheck = [core.getInput('duplicate-check-label')];
-  }
-
+  const labelsToCheckInput = core.getInput('duplicate-check-labels', {
+    required: true,
+  });
+  const labelsToCheck: string[] = JSON.parse(labelsToCheckInput);
   const hasRelevantLabel = issue.labels?.some((label) =>
     labelsToCheck.includes(label.name),
   );
   if (!hasRelevantLabel) {
-    core.info('No duplicate check label set, skipping');
+    core.info('SKIP: no duplicate check label set');
     return;
   }
 

@@ -43,19 +43,15 @@ export async function checkForExisting() {
     return;
   }
 
-  let labelsToCheck: string[] = [];
-  let labelsToCheckInput = core.getInput('existing-check-labels');
-  if (labelsToCheckInput) {
-    labelsToCheck = JSON.parse(labelsToCheckInput);
-  } else {
-    labelsToCheck = [core.getInput('existing-check-label')];
-  }
-
+  const labelsToCheckInput = core.getInput('existing-check-labels', {
+    required: true,
+  });
+  const labelsToCheck: string[] = JSON.parse(labelsToCheckInput);
   const hasRelevantLabel = issue.labels?.some((label) =>
     labelsToCheck.includes(label.name),
   );
   if (!hasRelevantLabel) {
-    core.info('No existing check label set, skipping');
+    core.info('SKIP: no existing check label set');
     return;
   }
 

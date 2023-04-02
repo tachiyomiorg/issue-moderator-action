@@ -33,13 +33,6 @@ inputs:
     required: false
     description: >
       A JSON-compliant string containing a list of label names as strings.
-      Supersedes `duplicate-check-label`.
-      Required if `duplicate-check-enabled` is enabled.
-  duplicate-check-label:
-    required: false
-    description: >
-      DEPRECATED; use `duplicate-check-labels` instead.
-      The label of the opened issues that will be checked.
       Required if `duplicate-check-enabled` is enabled.
   duplicate-check-comment:
     required: false
@@ -58,13 +51,6 @@ inputs:
     required: false
     description: >
       A JSON-compliant string containing a list of label names as strings to check.
-      Supersedes `duplicate-check-label`.
-      Required if `existing-check-enabled` is enabled.
-  existing-check-label:
-    required: false
-    description: >
-      DEPRECATED; use `existing-check-labels` instead.
-      The label of the opened issues that will be checked.
       Required if `existing-check-enabled` is enabled.
   existing-check-repo-url:
     required: false

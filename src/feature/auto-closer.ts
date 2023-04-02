@@ -26,7 +26,7 @@ export async function checkForAutoClose() {
 
     const rules: string = core.getInput('auto-close-rules');
     if (!rules) {
-      core.info('No auto-close rules set, skipping');
+      core.info('SKIP: no auto-close rules set');
       return;
     }
 
