@@ -39,7 +39,7 @@ export async function checkForExisting() {
 
   const issue = payload.issue as Issue;
 
-  if (await shouldIgnore(issue)) {
+  if (await shouldIgnore(issue.labels?.map((l) => l.name))) {
     return;
   }
 

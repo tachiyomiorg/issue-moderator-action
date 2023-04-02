@@ -43,7 +43,7 @@ export async function checkForAutoClose() {
 
     const issueData = await client.rest.issues.get(issueMetadata);
 
-    if (await shouldIgnore(issueData)) {
+    if (await shouldIgnore(issueData.data.labels?.map((l: any) => l.name))) {
       return;
     }
 
