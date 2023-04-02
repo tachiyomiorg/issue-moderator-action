@@ -2,6 +2,7 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { Issue } from '@octokit/webhooks-definitions/schema';
 
+import { shouldIgnore } from '../util/issues';
 import { urlsFromIssueBody } from '../util/urls';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
@@ -26,6 +27,10 @@ export async function checkForDuplicates() {
   }
 
   const issue = payload.issue as Issue;
+
+  if (await shouldIgnore(issue)) {
+    return;
+  }
 
   let labelsToCheck: string[] = [];
   let labelsToCheckInput = core.getInput('duplicate-check-labels');
