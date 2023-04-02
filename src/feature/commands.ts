@@ -32,17 +32,17 @@ const COMMANDS: Record<string, Command> = {
 
 const ALLOWED_COMMENT_ACTIONS = ['created'];
 
-// Check if the comment has a valid command and execute it.
+/**
+ * Check if the comment has a valid command and execute it.
+ */
 export async function checkForCommand() {
-  const { repo } = github.context;
   const payload = github.context.payload as IssueCommentEvent;
-
-  // Do nothing if it's wasn't a relevant action or it's not an issue comment.
-  if (!ALLOWED_COMMENT_ACTIONS.includes(payload.action) || !payload.comment) {
+  if (!ALLOWED_COMMENT_ACTIONS.includes(payload.action)) {
     core.info('Irrelevant action trigger');
     return;
   }
 
+  const { repo } = github.context;
   const {
     body: commentBody,
     node_id: commentNodeId,

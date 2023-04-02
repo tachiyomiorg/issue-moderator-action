@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Issue } from '@octokit/webhooks-definitions/schema';
+import { Issue, IssuesEvent } from '@octokit/webhooks-definitions/schema';
 import axios from 'axios';
 
 import { shouldIgnore } from '../util/issues';
@@ -18,22 +18,19 @@ interface Source {
   baseUrl: string;
 }
 
-// Check if the source request issue is from an existing extension.
-export async function checkForExisting() {
-  const existingCheckEnabled = core.getInput('existing-check-enabled');
-  if (existingCheckEnabled !== 'true') {
-    core.info('SKIP: the existing source check is disabled');
+/**
+ * Check if the requested URL(s) already exist as Tachiyomi sources.
+ */
+export async function checkForExistingSource() {
+  const payload = github.context.payload as IssuesEvent;
+  if (!ALLOWED_ISSUES_ACTIONS.includes(payload.action)) {
+    core.info('Irrelevant action trigger');
     return;
   }
 
-  const payload = github.context.payload;
-
-  if (
-    !payload.action ||
-    !payload.issue ||
-    !ALLOWED_ISSUES_ACTIONS.includes(payload.action)
-  ) {
-    core.info('Irrelevant action trigger');
+  const existingCheckEnabled = core.getInput('existing-check-enabled');
+  if (existingCheckEnabled !== 'true') {
+    core.info('SKIP: the existing source check is disabled');
     return;
   }
 

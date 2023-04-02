@@ -3,8 +3,8 @@ import * as github from '@actions/github';
 
 import { checkForAutoClose } from './feature/auto-closer';
 import { checkForCommand } from './feature/commands';
-import { checkForExisting } from './feature/existing-check';
-import { checkForDuplicates } from './feature/dupe-check';
+import { checkForDuplicateUrls } from './feature/duplicate-url-check';
+import { checkForExistingSource } from './feature/existing-source-check';
 
 async function withLogGroup(name: string, fn: () => Promise<void>) {
   core.startGroup(name);
@@ -21,13 +21,23 @@ async function run() {
     }
 
     if (eventName === 'issues') {
+      if (!payload.action || !payload.issue) {
+        core.info('Irrelevant action trigger');
+        return;
+      }
+
       await withLogGroup('Auto closer', checkForAutoClose);
-      await withLogGroup('Existing source checker', checkForExisting);
-      await withLogGroup('Duplicate URL checker', checkForDuplicates);
+      await withLogGroup('Existing source checker', checkForExistingSource);
+      await withLogGroup('Duplicate URL checker', checkForDuplicateUrls);
       return;
     }
 
     if (eventName === 'issue_comment') {
+      if (!payload.action || !payload.comment) {
+        core.info('Irrelevant action trigger');
+        return;
+      }
+
       await withLogGroup('Command', checkForCommand);
       return;
     }

@@ -1,28 +1,25 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Issue } from '@octokit/webhooks-definitions/schema';
+import { Issue, IssuesEvent } from '@octokit/webhooks-definitions/schema';
 
 import { addDuplicateLabel, shouldIgnore } from '../util/issues';
 import { urlsFromIssueBody } from '../util/urls';
 
 const ALLOWED_ISSUES_ACTIONS = ['opened'];
 
-// Check if the source request issue is a duplicate.
-export async function checkForDuplicates() {
-  const duplicateCheckEnabled = core.getInput('duplicate-check-enabled');
-  if (duplicateCheckEnabled !== 'true') {
-    core.info('SKIP: the duplicate URL check is disabled');
+/**
+ * Check if other open issues have the same URL(s).
+ */
+export async function checkForDuplicateUrls() {
+  const payload = github.context.payload as IssuesEvent;
+  if (!ALLOWED_ISSUES_ACTIONS.includes(payload.action)) {
+    core.info('Irrelevant action trigger');
     return;
   }
 
-  const payload = github.context.payload;
-
-  if (
-    !payload.action ||
-    !payload.issue ||
-    !ALLOWED_ISSUES_ACTIONS.includes(payload.action)
-  ) {
-    core.info('Irrelevant action trigger');
+  const duplicateCheckEnabled = core.getInput('duplicate-check-enabled');
+  if (duplicateCheckEnabled !== 'true') {
+    core.info('SKIP: the duplicate URL check is disabled');
     return;
   }
 

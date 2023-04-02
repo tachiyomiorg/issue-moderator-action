@@ -1,5 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
+import { IssuesEvent } from '@octokit/webhooks-definitions/schema';
+
 import { addLabels, shouldIgnore } from '../util/issues';
 
 interface Rule {
@@ -12,16 +14,13 @@ interface Rule {
 
 const ALLOWED_ACTIONS = ['opened', 'edited', 'reopened'];
 
+/**
+ * Check if the issue should be automatically closed based on defined rules.
+ */
 export async function checkForAutoClose() {
   try {
-    const { issue, payload } = github.context;
-
-    // Do nothing if it's wasn't a relevant action or it's not an issue
-    if (
-      !payload.action ||
-      !payload.issue ||
-      ALLOWED_ACTIONS.indexOf(payload.action) === -1
-    ) {
+    const payload = github.context.payload as IssuesEvent;
+    if (!ALLOWED_ACTIONS.includes(payload.action)) {
       return;
     }
 
@@ -31,11 +30,11 @@ export async function checkForAutoClose() {
       return;
     }
 
-    // Get client and context
     const client = github.getOctokit(
       core.getInput('repo-token', { required: true }),
     );
 
+    const { issue } = github.context;
     const issueMetadata = {
       owner: issue.owner,
       repo: issue.repo,
