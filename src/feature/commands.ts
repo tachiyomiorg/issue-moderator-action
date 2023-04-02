@@ -1,9 +1,9 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { GitHub } from '@actions/github/lib/utils';
 import { IssueCommentEvent } from '@octokit/webhooks-definitions/schema';
+import { addDuplicateLabel } from '../util/issues';
+import { GitHubClient } from '../types';
 
-type GitHubClient = InstanceType<typeof GitHub>;
 type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam';
 type CommandFn = (client: GitHubClient, commentBody: string) => Promise<void>;
 interface Command {
@@ -160,6 +160,8 @@ async function duplicateIssue(client: GitHubClient, commentBody: string) {
 
     core.info(`Issue #${issue.number} closed`);
   }
+
+  await addDuplicateLabel(client, issueMetadata);
 }
 
 async function editIssueTitle(client: GitHubClient) {

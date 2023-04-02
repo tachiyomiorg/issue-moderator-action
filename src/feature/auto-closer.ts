@@ -1,12 +1,13 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { shouldIgnore } from '../util/issues';
+import { addLabels, shouldIgnore } from '../util/issues';
 
 interface Rule {
   type: 'title' | 'body' | 'both';
   regex: string;
   ignoreCase?: boolean;
   message: string;
+  labels?: string[];
 }
 
 const ALLOWED_ACTIONS = ['opened', 'edited', 'reopened'];
@@ -48,6 +49,7 @@ export async function checkForAutoClose() {
     }
 
     const parsedRules = JSON.parse(rules) as Rule[];
+    let labels: string[] = [];
     const results = parsedRules
       .map((rule) => {
         let texts: string[] = [payload?.issue?.title];
@@ -64,6 +66,7 @@ export async function checkForAutoClose() {
         const message = rule.message.replace(/\{match\}/g, match);
 
         if (failed) {
+          labels = labels.concat(rule.labels ?? []);
           core.info(`Failed: ${message}`);
           return message;
         } else {
@@ -93,6 +96,8 @@ export async function checkForAutoClose() {
           body: evalTemplate(message, payload),
         });
       }
+
+      await addLabels(client, issueMetadata, labels);
 
       await client.rest.issues.update({
         ...issueMetadata,

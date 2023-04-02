@@ -11,6 +11,9 @@ inputs:
   repo-token:
     required: true
     description: GitHub token
+  duplicate-label:
+    required: false
+    description: Label to add on duplicate command and auto duplicate check
 
   edit-title-command:
     required: false
@@ -75,9 +78,10 @@ inputs:
       {
         type: 'title' | 'body' | 'both';  // Part to run regex against.
         regex: string;                    // Pattern which if matched closes the issue.
+        ignoreCase: boolean | undefined;  // Defines if the regex will be case insensitive.
         message: string;                  // Message to post when closing the issue.
                                           // You can use {match} as a placeholder to the first match.
-        ignoreCase: boolean | undefined;  // Defines if the regex will be case insensitive.
+        labels: string[] | undefined;     // Labels to add when closing the issue.
       }
   auto-close-ignore-label:
     required: false
