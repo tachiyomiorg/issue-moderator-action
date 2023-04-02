@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { IssueCommentEvent } from '@octokit/webhooks-definitions/schema';
+
 import { addDuplicateLabel } from '../util/issues';
 import { GitHubClient } from '../types';
 
@@ -129,7 +130,7 @@ async function lockIssue(client: GitHubClient) {
     lock_reason: reason ? (reason as LockReason) : undefined,
   });
 
-  core.info(`Issue #${payload.issue!.number} locked`);
+  core.info(`Locked issue #${payload.issue!.number}`);
 }
 
 async function duplicateIssue(client: GitHubClient, commentBody: string) {
@@ -150,6 +151,7 @@ async function duplicateIssue(client: GitHubClient, commentBody: string) {
   const issueData = await client.rest.issues.get(issueMetadata);
 
   if (issueData.data.state === 'open') {
+    await addDuplicateLabel(client, issueMetadata);
     await client.rest.issues.update({
       owner: repo.owner,
       repo: repo.repo,
@@ -158,10 +160,8 @@ async function duplicateIssue(client: GitHubClient, commentBody: string) {
       state_reason: 'not_planned',
     });
 
-    core.info(`Issue #${issue.number} closed`);
+    core.info(`Closed issue #${issue.number}`);
   }
-
-  await addDuplicateLabel(client, issueMetadata);
 }
 
 async function editIssueTitle(client: GitHubClient) {
@@ -193,5 +193,5 @@ async function editIssueTitle(client: GitHubClient) {
     title: newTitle,
   });
 
-  core.info(`Title of the issue #${payload.issue!.number} edited`);
+  core.info(`Edited title of issue #${payload.issue!.number}`);
 }

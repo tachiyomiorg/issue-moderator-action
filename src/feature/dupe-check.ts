@@ -11,7 +11,7 @@ const ALLOWED_ISSUES_ACTIONS = ['opened'];
 export async function checkForDuplicates() {
   const duplicateCheckEnabled = core.getInput('duplicate-check-enabled');
   if (duplicateCheckEnabled !== 'true') {
-    core.info('The duplicate check is disabled');
+    core.info('SKIP: the duplicate URL check is disabled');
     return;
   }
 
@@ -97,6 +97,7 @@ export async function checkForDuplicates() {
     .join(', ')
     .replace(/, ([^,]*)$/, ' and $1');
 
+  await addDuplicateLabel(client, issueMetadata);
   await client.rest.issues.update({
     ...issueMetadata,
     state: 'closed',
@@ -109,6 +110,4 @@ export async function checkForDuplicates() {
       .getInput('duplicate-check-comment')
       .replace(/\{duplicateIssuesText\}/g, duplicateIssuesText),
   });
-
-  await addDuplicateLabel(client, issueMetadata);
 }
