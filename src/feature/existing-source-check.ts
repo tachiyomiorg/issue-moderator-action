@@ -3,7 +3,7 @@ import * as github from '@actions/github';
 import { Issue, IssuesEvent } from '@octokit/webhooks-definitions/schema';
 import axios from 'axios';
 
-import { shouldIgnore } from '../util/issues';
+import { addDuplicateLabel, shouldIgnore } from '../util/issues';
 import { cleanUrl, urlsFromIssueBody } from '../util/urls';
 
 interface Extension {
@@ -71,8 +71,11 @@ export async function checkForExistingSource() {
   }
 
   const requestUrl = cleanUrl(issueUrls[0]);
+  const isRequestUrl = (url: string) => cleanUrl(url) === requestUrl;
   const existingExtension = repository.find((extension) =>
-    extension.sources.find((source) => cleanUrl(source.baseUrl) === requestUrl),
+    extension.sources.some((source) =>
+      source.baseUrl.split(', ').some(isRequestUrl),
+    ),
   );
   if (!existingExtension) {
     core.info(`Existing extension with the URL "${requestUrl}" was not found.`);
@@ -94,6 +97,7 @@ export async function checkForExistingSource() {
   const extensionName = existingExtension.name.replace('Tachiyomi: ', '');
   const extensionLang = findLangName(existingExtension.lang);
 
+  await addDuplicateLabel(client, issueMetadata);
   await client.rest.issues.update({
     ...issueMetadata,
     state: 'closed',
