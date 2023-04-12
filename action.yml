@@ -42,7 +42,7 @@ inputs:
     description: >
       The body of the comment when an issue is detected to be a duplicate.
     default: |
-      This issue was closed because it is a duplicate of {duplicateIssuesText}. That means someone else already requested this website to to be added as an extension before.
+      This issue was closed because it is a duplicate of {duplicateIssuesText}.
 
       *This is an automated action. If you think this is a mistake, please comment about it so the issue can be reopened if needed.*
 
