@@ -37,10 +37,10 @@
   "resolved" "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz"
   "version" "1.4.15"
 
-"@octokit/action@5.0.3":
-  "integrity" "sha512-QOZaqcokC4Ex5mlMKWsnhefLyjBUIOJbDTdpll2nqCnIOuJId8wLOKH+JR9h/2VkG0lQ59D1VGIVzSh0zUqf9w=="
-  "resolved" "https://registry.npmjs.org/@octokit/action/-/action-5.0.3.tgz"
-  "version" "5.0.3"
+"@octokit/action@5.0.4":
+  "integrity" "sha512-DaG5vNauJUHiqyGFLh3prUTCCNNdcc6FdPYArjDTBUxdMc0cgC4szJaaKhGP1bHAobvgpjnYgFlBXXk5pFe3cA=="
+  "resolved" "https://registry.npmjs.org/@octokit/action/-/action-5.0.4.tgz"
+  "version" "5.0.4"
   dependencies:
     "@octokit/auth-action" "^2.0.0"
     "@octokit/core" "^4.0.0"
@@ -256,10 +256,10 @@
   "resolved" "https://registry.npmjs.org/@types/dedent/-/dedent-0.7.0.tgz"
   "version" "0.7.0"
 
-"@types/node@*", "@types/node@>= 14", "@types/node@16.18.29":
-  "integrity" "sha512-cal+XTYF4JBwG82kw3m9ktTOyUj7GXcO9i2o+t49y/OF+3asYfpHqTROF1UbV91e71g/UB5wNeL5hfqPthzp8Q=="
-  "resolved" "https://registry.npmjs.org/@types/node/-/node-16.18.29.tgz"
-  "version" "16.18.29"
+"@types/node@*", "@types/node@>= 14", "@types/node@16.18.31":
+  "integrity" "sha512-KPXltf4z4g517OlVJO9XQ2357CYw7fvuJ3ZuBynjXC5Jos9i+K7LvFb7bUIwtJXSZj0vTp9Q6NJBSQpkwwO8Zw=="
+  "resolved" "https://registry.npmjs.org/@types/node/-/node-16.18.31.tgz"
+  "version" "16.18.31"
 
 "@vercel/ncc@0.36.1":
   "integrity" "sha512-S4cL7Taa9yb5qbv+6wLgiKVZ03Qfkc4jGRuiUQMQ8HGBD5pcNRnHeYM33zBvJE4/zJGjJJ8GScB+WmTsn9mORw=="
