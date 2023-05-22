@@ -25,10 +25,10 @@
     "@octokit/action": "5.0.4",
     "@tsconfig/node16": "1.0.4",
     "@types/dedent": "0.7.0",
-    "@types/node": "16.18.31",
+    "@types/node": "16.18.32",
     "@vercel/ncc": "0.36.1",
     "prettier": "2.8.8",
     "typescript": "5.0.4",
-    "vitest": "0.31.0"
+    "vitest": "0.31.1"
   }
 }

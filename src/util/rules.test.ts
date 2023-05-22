@@ -12,7 +12,7 @@ describe('evaluateRules', () => {
           ignoreCase: true,
           message: 'Contains default message',
           labels: ['failed'],
-        }
+        },
       ],
       'Title with default message',
       'Body with DEFAULT message',
