@@ -3,14 +3,7 @@ import * as github from '@actions/github';
 import { IssuesEvent } from '@octokit/webhooks-definitions/schema';
 
 import { addLabels, shouldIgnore } from '../util/issues';
-
-interface Rule {
-  type: 'title' | 'body' | 'both';
-  regex: string;
-  ignoreCase?: boolean;
-  message: string;
-  labels?: string[];
-}
+import { evaluateRules, Rule } from '../util/rules';
 
 /**
  * Check if the issue should be automatically closed based on defined rules.
@@ -46,33 +39,13 @@ export async function checkForAutoClose() {
     }
 
     const parsedRules = JSON.parse(rules) as Rule[];
-    let labels: string[] = [];
-    const results = parsedRules
-      .map((rule) => {
-        let texts: string[] = [payload?.issue?.title];
+    const [failed, labels] = evaluateRules(
+      parsedRules,
+      payload?.issue?.title ?? '',
+      payload?.issue?.body ?? '',
+    );
 
-        if (rule.type === 'body') {
-          texts = [payload?.issue?.body ?? ''];
-        } else if (rule.type === 'both') {
-          texts.push(payload?.issue?.body ?? '');
-        }
-
-        const regexMatches = check(rule.regex, texts, rule.ignoreCase);
-        const failed = regexMatches.length > 0;
-        const match = failed ? regexMatches[0][1] : '<No match>';
-        const message = rule.message.replace(/\{match\}/g, match);
-
-        if (failed) {
-          labels = labels.concat(rule.labels ?? []);
-          core.info(`Failed: ${message}`);
-          return message;
-        } else {
-          core.info(`Passed: ${message}`);
-        }
-      })
-      .filter(Boolean);
-
-    if (results.length > 0) {
+    if (failed.length > 0) {
       // Comment and close if failed any rule
       const infoMessage =
         payload.action === 'opened' ? 'automatically closed' : 'not reopened';
@@ -85,7 +58,7 @@ export async function checkForAutoClose() {
       if (shouldComment) {
         const message = [
           `@\${issue.user.login} this issue was ${infoMessage} because:\n`,
-          ...results,
+          ...failed,
         ].join('\n- ');
 
         await client.rest.issues.createComment({
@@ -105,34 +78,6 @@ export async function checkForAutoClose() {
   } catch (error: any) {
     core.setFailed(error.message);
   }
-}
-
-/**
- * Checks all the texts in an array through an RegEx pattern
- * and returns the match results of the ones that matched.
- *
- * @param patternString The RegEx input in string format that will be created.
- * @param texts The text array that will be tested through the pattern.
- * @param ignoreCase If it should be case insensitive.
- * @returns An array of the RegEx match results.
- */
-function check(
-  patternString: string,
-  texts: string[] | undefined,
-  ignoreCase: boolean = false,
-): RegExpMatchArray[] {
-  const pattern = new RegExp(patternString, ignoreCase ? 'i' : undefined);
-  return texts
-    ?.map((text) => {
-      // For all the texts (title or body), the input will be
-      // normalized to remove any accents or diacritics, and then
-      // will be tested by the pattern provided.
-      return text
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .match(pattern);
-    })
-    ?.filter(Boolean) as RegExpMatchArray[];
 }
 
 function evalTemplate(template: string, params: any) {
