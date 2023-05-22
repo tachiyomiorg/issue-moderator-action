@@ -22,13 +22,13 @@ describe('evaluateRules', () => {
     expect(labels).toStrictEqual(['failed']);
   });
 
-  it('returns failed rules and labels when closeifMatch is false', () => {
+  it('returns failed rules and labels when closeIfMatch is false', () => {
     const [failed, labels] = evaluateRules(
       [
         {
           type: 'title',
           regex: '.*default message.*',
-          closeifMatch: false,
+          closeIfMatch: false,
           ignoreCase: true,
           message: 'Does not contains template',
           labels: ['failed'],

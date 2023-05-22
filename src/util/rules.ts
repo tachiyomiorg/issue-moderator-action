@@ -3,7 +3,7 @@ import * as core from '@actions/core';
 export interface Rule {
   type: 'title' | 'body' | 'both';
   regex: string;
-  closeifMatch?: boolean;
+  closeIfMatch?: boolean;
   ignoreCase?: boolean;
   message: string;
   labels?: string[];
@@ -24,8 +24,8 @@ export function evaluateRules(
         texts.push(body);
       }
 
-      const regexMatches = check(rule.regex, texts, rule.ignoreCase);
-      const failed = regexMatches.length > 0 || !rule.closeifMatch;
+      const regexMatches = check(rule.regex, texts, rule.ignoreCase, rule.closeIfMatch);
+      const failed = regexMatches.length > 0;
       const match = regexMatches?.[0]?.[1] ?? '<No match>';
       const message = rule.message.replace(/\{match\}/g, match);
 
@@ -49,6 +49,7 @@ export function evaluateRules(
  * @param patternString The RegEx input in string format that will be created.
  * @param texts The text array that will be tested through the pattern.
  * @param ignoreCase If it should be case insensitive.
+ * @param failIfMatch Whether a match is considered a failure or not.
  *
  * @returns An array of the RegEx match results.
  */
@@ -56,6 +57,7 @@ function check(
   patternString: string,
   texts: string[] | undefined,
   ignoreCase: boolean = false,
+  failIfMatch: boolean = true,
 ): RegExpMatchArray[] {
   const pattern = new RegExp(patternString, ignoreCase ? 'i' : undefined);
   return texts
@@ -68,5 +70,5 @@ function check(
         .replace(/[\u0300-\u036f]/g, '')
         .match(pattern);
     })
-    ?.filter(Boolean) as RegExpMatchArray[];
+    ?.filter((result) => !!result || !failIfMatch) as RegExpMatchArray[];
 }

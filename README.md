@@ -91,7 +91,7 @@ Rules are re-evaluated on issue edits and automatically reopens the issue if the
 {
   type: 'title' | 'body' | 'both';
   regex: string;
-  closeifMatch: boolean | undefined;
+  closeIfMatch: boolean | undefined;
   message: string;
   ignoreCase: boolean | undefined;
   labels: string[] | undefined;
