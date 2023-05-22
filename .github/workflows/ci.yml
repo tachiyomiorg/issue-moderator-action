@@ -23,7 +23,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.tool-versions'
+          node-version: 16
           cache: npm
 
       - run: npm install
