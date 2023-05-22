@@ -91,15 +91,19 @@ Rules are re-evaluated on issue edits and automatically reopens the issue if the
 {
   type: 'title' | 'body' | 'both';
   regex: string;
+  closeifMatch: boolean | undefined;
   message: string;
   ignoreCase: boolean | undefined;
+  labels: string[] | undefined;
 }
 ```
 
 - `type`: Part to run regex against.
 - `regex`: String compiled to a JavaScript `RegExp`. If matched, the issue is closed.
+- `closeIfMatch`: Close the issue if `regex` is matched. Defaults to `true`, so an issue is closed if the regex is matched. If `false`, an issue is closed if the regex is not matched, i.e. enforcing presence of something.
 - `message`: ES2015-style template literal evaluated with the issue webhook payload in context (see [payload example](https://developer.github.com/v3/activity/events/types/#webhook-payload-example-15)). Posted when the issue is closed. You can use `{match}` as a placeholder to the first match.
 - `ignoreCase`: Optionally make the regex case insensitive. Defaults to `false`.
+- `labels`: Optional labels to add when closing the issue.
 
 Example:
 

@@ -76,12 +76,13 @@ inputs:
       A JSON-compliant string containing a list of rules, where a rule consists of:
 
       {
-        type: 'title' | 'body' | 'both';  // Part to run regex against.
-        regex: string;                    // Pattern which if matched closes the issue.
-        ignoreCase: boolean | undefined;  // Defines if the regex will be case insensitive.
-        message: string;                  // Message to post when closing the issue.
-                                          // You can use {match} as a placeholder to the first match.
-        labels: string[] | undefined;     // Labels to add when closing the issue.
+        type: 'title' | 'body' | 'both';    // Part to run regex against.
+        regex: string;                      // Pattern which if matched closes the issue.
+        closeifMatch: boolean | undefined;  // Whether to close if the regex is matched or not.
+        ignoreCase: boolean | undefined;    // Defines if the regex will be case insensitive.
+        message: string;                    // Message to post when closing the issue.
+                                            // You can use {match} as a placeholder to the first match.
+        labels: string[] | undefined;       // Labels to add when closing the issue.
       }
   auto-close-ignore-label:
     required: false

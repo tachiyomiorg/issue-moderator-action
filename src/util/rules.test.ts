@@ -21,4 +21,24 @@ describe('evaluateRules', () => {
     expect(failed).toStrictEqual(['Contains default message']);
     expect(labels).toStrictEqual(['failed']);
   });
+
+  it('returns failed rules and labels when closeifMatch is false', () => {
+    const [failed, labels] = evaluateRules(
+      [
+        {
+          type: 'title',
+          regex: '.*default message.*',
+          closeifMatch: false,
+          ignoreCase: true,
+          message: 'Does not contains template',
+          labels: ['failed'],
+        },
+      ],
+      'Modified title',
+      'Body',
+    );
+
+    expect(failed).toStrictEqual(['Does not contains template']);
+    expect(labels).toStrictEqual(['failed']);
+  });
 });

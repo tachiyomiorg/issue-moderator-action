@@ -3,6 +3,7 @@ import * as core from '@actions/core';
 export interface Rule {
   type: 'title' | 'body' | 'both';
   regex: string;
+  closeifMatch?: boolean;
   ignoreCase?: boolean;
   message: string;
   labels?: string[];
@@ -24,8 +25,8 @@ export function evaluateRules(
       }
 
       const regexMatches = check(rule.regex, texts, rule.ignoreCase);
-      const failed = regexMatches.length > 0;
-      const match = failed ? regexMatches[0][1] : '<No match>';
+      const failed = regexMatches.length > 0 || !rule.closeifMatch;
+      const match = regexMatches?.[0]?.[1] ?? '<No match>';
       const message = rule.message.replace(/\{match\}/g, match);
 
       if (failed) {
@@ -48,6 +49,7 @@ export function evaluateRules(
  * @param patternString The RegEx input in string format that will be created.
  * @param texts The text array that will be tested through the pattern.
  * @param ignoreCase If it should be case insensitive.
+ *
  * @returns An array of the RegEx match results.
  */
 function check(
