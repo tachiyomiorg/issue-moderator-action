@@ -24,7 +24,12 @@ export function evaluateRules(
         texts.push(body);
       }
 
-      const regexMatches = check(rule.regex, texts, rule.ignoreCase, rule.closeIfMatch);
+      const regexMatches = check(
+        rule.regex,
+        texts,
+        rule.ignoreCase,
+        rule.closeIfMatch,
+      );
       const failed = regexMatches.length > 0;
       const match = regexMatches?.[0]?.[1] ?? '<No match>';
       const message = rule.message.replace(/\{match\}/g, match);
