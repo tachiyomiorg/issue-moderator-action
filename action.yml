@@ -15,6 +15,10 @@ inputs:
     required: false
     description: Label to add on duplicate command and auto duplicate check
 
+  blurb-command:
+    required: false
+    default: Blurb
+    description: Command to close an issue with a blurb posted as a comment
   edit-title-command:
     required: false
     default: Edit title to
@@ -27,6 +31,16 @@ inputs:
     required: false
     default: 'Duplicate of #'
     description: Command to close a duplicate issue
+
+  blurbs:
+    required: false
+    description: |
+      A JSON-compliant string containing a list of blurbs, where a blurb consists of:
+
+      {
+        keywords: string[];  // Aliases for the blurb.
+        message: string;     // Message to post when closing the issue.
+      }
 
   duplicate-check-enabled:
     required: false

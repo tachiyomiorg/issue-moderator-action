@@ -5,9 +5,8 @@ import { GitHubClient } from '../../types';
 
 type LockReason = 'off-topic' | 'too heated' | 'resolved' | 'spam';
 
-export async function lockIssue(client: GitHubClient) {
+export async function lockIssue(client: GitHubClient, commentBody: string) {
   const { issue, payload, repo } = github.context;
-  const commentBody: string = payload.comment?.body ?? '';
 
   const lockReasons = ['off-topic', 'too heated', 'resolved', 'spam'];
 

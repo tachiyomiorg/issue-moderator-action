@@ -62,6 +62,7 @@ jobs:
 
 | Name                 | Description                             | Default value   |
 | -------------------- | --------------------------------------- | --------------- |
+| `blurb-command`      | Optional blurb command text.            | Blurb           |
 | `duplicate-command`  | Optional duplicate command text.        | Duplicate of #  |
 | `edit-title-command` | Optional edit issue title command text. | Edit title to   |
 | `lock-command`       | Optional lock command text.             | Lock this issue |
@@ -127,6 +128,27 @@ and `/` as the invocation character, and alternatively with a more
 human readable way, with sentences that can be customized.
 
 The comment with the command will be minimized and marked as resolved.
+
+### Blurb
+
+This command will post a comment blurb if found and close the issue.
+
+Usage:
+
+- **Bot-like**: `?blurb <blurb keyword>`
+- **Sentence**: `Blurb <blurb keyword>`
+
+Requires blurbs to be defined. Example:
+
+```yml
+blurbs: |
+  [
+    {
+      "keywords": ["help", "discord"],
+      "message": "For more help, please visit our Discord server."
+    }
+  ]
+```
 
 ### Duplicate
 

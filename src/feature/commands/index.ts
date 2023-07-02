@@ -8,6 +8,7 @@ import { minimizeComment } from '../../util/comments';
 import { closeDuplicateIssue } from './close-duplicate-issue';
 import { editIssueTitle } from './edit-issue-title';
 import { lockIssue } from './lock-issue';
+import { handleBlurb } from './blurbs';
 
 type CommandFn = (client: GitHubClient, commentBody: string) => Promise<void>;
 interface Command {
@@ -19,6 +20,10 @@ const BOT_CHARACTERS = '^[/?!]';
 export const BOT_REGEX = new RegExp(BOT_CHARACTERS);
 
 const COMMANDS: Record<string, Command> = {
+  blurb: {
+    minimizeComment: true,
+    fn: handleBlurb,
+  },
   duplicate: {
     minimizeComment: false,
     fn: closeDuplicateIssue,

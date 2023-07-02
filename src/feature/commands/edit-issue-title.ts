@@ -3,9 +3,11 @@ import * as github from '@actions/github';
 
 import { GitHubClient } from '../../types';
 
-export async function editIssueTitle(client: GitHubClient) {
+export async function editIssueTitle(
+  client: GitHubClient,
+  commentBody: string,
+) {
   const { issue, payload, repo } = github.context;
-  const commentBody: string = payload.comment?.body ?? '';
 
   // Get the new title inside a double quotes string style,
   // with support to escaping.
