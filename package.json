@@ -1,6 +1,6 @@
 {
   "name": "@tachiyomiorg/issue-moderator-action",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "GitHub action to moderate issues",
   "repository": {
     "type": "git",
