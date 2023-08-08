@@ -27,6 +27,7 @@ jobs:
         with:
           add-paths: dist/
           commit-message: Generate JavaScript
+          author: GitHub <noreply@github.com>
           title: Generate JavaScript
           body: |
             This Pull Request is opened automatically and contains generated JavaScript code based on pushed changes.
