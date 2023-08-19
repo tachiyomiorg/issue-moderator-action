@@ -1,4 +1,4 @@
-name: 'Generate JavaScript code and open Pull request with it'
+name: 'Generate JavaScript code and open pull request with it'
 
 on:
   push:
@@ -35,7 +35,7 @@ jobs:
           git diff --word-diff=porcelain --word-diff-regex=. dist/index.js | grep '^[+-]' >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
-      - name: Create Pull Request with generated JavaScript
+      - name: Create pull request with generated JavaScript
         uses: peter-evans/create-pull-request@v5
         with:
           add-paths: dist/
@@ -45,7 +45,7 @@ jobs:
           branch: github-actions/generate-js/${{ github.ref_name }}
           title: Generate JavaScript for branch ${{ github.ref_name }}
           body: |
-            This Pull Request is opened automatically and contains generated JavaScript code based on commit ${{ github.sha }}. The changes are the following (context excluded):
+            This pull pequest is opened automatically and contains generated JavaScript code based on commit ${{ github.sha }}. The changes are the following (context excluded):
             ```
             ${{ steps.diff.outputs.GIT_DIFF }}
             ```
