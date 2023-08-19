@@ -27,6 +27,10 @@ jobs:
 
       - run: npm run prepare
 
+      - id: diff
+        run: |
+          echo "GIT_DIFF=$(git diff --word-diff=porcelain --word-diff-regex=." >> $GITHUB_OUTPUT
+
       - name: Create Pull Request with generated JavaScript
         uses: peter-evans/create-pull-request@v5
         with:
@@ -37,4 +41,7 @@ jobs:
           branch: github-actions/generate-js/${{ github.ref_name }}
           title: Generate JavaScript
           body: |
-            This Pull Request is opened automatically and contains generated JavaScript code based on commit ${{ github.sha }}.
+            This Pull Request is opened automatically and contains generated JavaScript code based on commit ${{ github.sha }}. The changes are the following:
+            ```
+            ${{ steps.diff.outputs.GIT_DIFF }}
+            ```
