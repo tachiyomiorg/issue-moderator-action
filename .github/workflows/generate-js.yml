@@ -2,8 +2,9 @@ name: 'Generate JavaScript code and open Pull request with it'
 
 on:
   push:
-    branches:
-     - '**'
+    branches-ignore:
+     - 'renovate/*'
+     - 'github-actions/generate-js/*'
 
 jobs:
   build:
