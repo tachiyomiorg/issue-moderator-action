@@ -43,7 +43,7 @@ jobs:
             Generate JavaScript based on ${{ github.sha }}
           author: GitHub <noreply@github.com>
           branch: github-actions/generate-js/${{ github.ref_name }}
-          title: Generate JavaScript
+          title: Generate JavaScript for branch ${{ github.ref_name }}
           body: |
             This Pull Request is opened automatically and contains generated JavaScript code based on commit ${{ github.sha }}. The changes are the following:
             ```
