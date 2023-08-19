@@ -29,7 +29,7 @@ jobs:
 
       - id: diff
         run: |
-          echo "GIT_DIFF=$(git diff --word-diff=porcelain --word-diff-regex=." >> $GITHUB_OUTPUT
+          echo "GIT_DIFF=$(git diff --word-diff=porcelain --word-diff-regex=.)" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request with generated JavaScript
         uses: peter-evans/create-pull-request@v5
