@@ -27,9 +27,13 @@ jobs:
 
       - run: npm run prepare
 
-      - id: diff
+      - name: Get word diff to see changes in dist/index.js
+        id: diff
         run: |
-          echo "GIT_DIFF=$(git diff --word-diff=porcelain --word-diff-regex=.)" >> $GITHUB_OUTPUT
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "GIT_DIFF<<$EOF" >> $GITHUB_OUTPUT
+          git diff --word-diff=porcelain --word-diff-regex=. >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request with generated JavaScript
         uses: peter-evans/create-pull-request@v5
