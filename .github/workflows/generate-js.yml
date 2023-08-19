@@ -5,6 +5,10 @@ on:
     branches-ignore:
      - 'renovate/*'
      - 'github-actions/generate-js/*'
+    paths-ignore:
+     - '.github/**'
+     - '**.md'
+     - 'action.yml'
 
 jobs:
   build:
