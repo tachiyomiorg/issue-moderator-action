@@ -32,7 +32,7 @@ jobs:
         run: |
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "GIT_DIFF<<$EOF" >> $GITHUB_OUTPUT
-          git diff --word-diff=porcelain --word-diff-regex=. | grep '^[+-]' >> $GITHUB_OUTPUT
+          git diff --word-diff=porcelain --word-diff-regex=. dist/index.js | grep '^[+-]' >> $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Create Pull Request with generated JavaScript
