@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@octokit/action": "6.0.4",
-    "@tsconfig/node16": "16.1.0",
+    "@tsconfig/node16": "16.1.1",
     "@types/dedent": "0.7.0",
     "@types/node": "16.18.32",
     "@vercel/ncc": "0.36.1",
