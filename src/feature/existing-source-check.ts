@@ -108,6 +108,7 @@ export async function checkForExistingSource() {
     ...issueMetadata,
     body: core
       .getInput('existing-check-comment')
+      .replace(/\{requestUrl\}/g, requestUrl)
       .replace(/\{extensionName\}/g, extensionName)
       .replace(/\{extensionLang\}/g, extensionLang),
   });
