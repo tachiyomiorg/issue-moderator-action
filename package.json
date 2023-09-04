@@ -23,9 +23,9 @@
   },
   "devDependencies": {
     "@octokit/action": "6.0.5",
-    "@tsconfig/node16": "16.1.1",
+    "@tsconfig/node20": "20.1.2",
     "@types/dedent": "0.7.0",
-    "@types/node": "16.18.32",
+    "@types/node": "20.5.9",
     "@vercel/ncc": "0.36.1",
     "prettier": "3.0.3",
     "typescript": "5.1.6",
