@@ -80,7 +80,7 @@ inputs:
     description: >
       The body of the comment when an issue is detected to be of an existing source.
     default: |
-      This issue was closed because an extension with the provided URL already exists with the name of **{extensionName}**, under the **{extensionLang}** section.
+      This issue was closed because an extension with the provided URL ({requestUrl}) already exists with the name of **{extensionName}**, under the **{extensionLang}** section.
 
       *This is an automated action. If you think this is a mistake, please comment about it so the issue can be reopened if needed.*
 
