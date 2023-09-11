@@ -23,13 +23,16 @@ jobs:
 
       - run: npm run prepare
 
-      - name: Get word diff to see changes in dist/index.js
+      - name: Get word diff to see changes in dist folder
         id: diff
         run: |
-          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-          echo "GIT_DIFF<<$EOF" >> $GITHUB_OUTPUT
-          git diff --word-diff=porcelain --word-diff-regex=. dist/ | grep '^[+-]' >> $GITHUB_OUTPUT
-          echo "$EOF" >> $GITHUB_OUTPUT
+          if ! git diff --quiet dist
+          then
+            EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+            echo "GIT_DIFF<<$EOF" >> $GITHUB_OUTPUT
+            git diff --word-diff=porcelain --word-diff-regex=. dist | grep '^[+-]' >> $GITHUB_OUTPUT
+            echo "$EOF" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create pull request with generated JavaScript
         uses: peter-evans/create-pull-request@v5
