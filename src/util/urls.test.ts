@@ -50,6 +50,10 @@ describe('urlsFromIssueBody', () => {
         ['foo https://github.com/tachiyomiorg bar', []],
         ['foo user-images.githubusercontent.com/something bar', []],
         ['foo www.gist.github.com/something bar', []],
+        [
+          'foo https://github.com/tachiyomiorg/tachiyomi-extensions/blob/master/REMOVED_SOURCES.md something',
+          [],
+        ],
       ] as const
     ).forEach(([body, expectedUrls]) => {
       expect(urlsFromIssueBody(body)).toStrictEqual(expectedUrls);
@@ -65,7 +69,7 @@ describe('cleanUrl', () => {
           'https://www.tachiyomi.org/subpath?foo=bar#hash',
           'tachiyomi.org/subpath?foo=bar#hash',
         ],
-        ['http://google.com/', 'google.com/'],
+        ['http://google.com/', 'google.com'],
         ['https://GITHUB.com', 'github.com'],
       ] as const
     ).forEach(([url, expectedUrl]) => {
