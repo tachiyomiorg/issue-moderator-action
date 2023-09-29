@@ -29,6 +29,6 @@
     "@vercel/ncc": "0.38.0",
     "prettier": "3.0.3",
     "typescript": "5.1.6",
-    "vitest": "0.34.4"
+    "vitest": "0.34.6"
   }
 }
