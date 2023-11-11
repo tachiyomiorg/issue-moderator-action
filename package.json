@@ -12,7 +12,7 @@
     "format": "prettier --write .",
     "test": "vitest --run",
     "test:integ": "vitest --config vitest.config.integ.ts",
-    "build": "ncc build src/main.ts --minify",
+    "build": "node esbuild.config.mjs",
     "prepare": "npm run format && npm run test && npm run build"
   },
   "dependencies": {
@@ -26,9 +26,9 @@
     "@tsconfig/node20": "20.1.2",
     "@types/dedent": "0.7.2",
     "@types/node": "20.9.0",
-    "@vercel/ncc": "0.38.1",
+    "esbuild": "0.19.5",
     "prettier": "3.0.3",
-    "typescript": "5.1.6",
+    "typescript": "5.2.2",
     "vitest": "0.34.6"
   }
 }
