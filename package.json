@@ -28,7 +28,7 @@
     "@types/node": "20.9.0",
     "esbuild": "0.19.5",
     "prettier": "3.0.3",
-    "typescript": "5.2.2",
+    "typescript": "5.3.2",
     "vitest": "0.34.6"
   }
 }
