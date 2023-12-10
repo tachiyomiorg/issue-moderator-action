@@ -22,13 +22,13 @@
     "axios": "1.6.2"
   },
   "devDependencies": {
-    "@octokit/action": "6.0.6",
+    "@octokit/action": "6.0.7",
     "@tsconfig/node20": "20.1.2",
     "@types/dedent": "0.7.2",
     "@types/node": "20.9.0",
-    "esbuild": "0.19.8",
-    "prettier": "3.1.0",
-    "typescript": "5.3.2",
+    "esbuild": "0.19.9",
+    "prettier": "3.1.1",
+    "typescript": "5.3.3",
     "vitest": "0.34.6"
   }
 }
