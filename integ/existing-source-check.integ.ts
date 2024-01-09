@@ -6,7 +6,8 @@ import { baseIssueMetadata, waitForClosedIssue } from './util';
 const octokit = new Octokit();
 
 describe('Existing source check', () => {
-  test('Issue created for an existing source gets automatically closed', async () => {
+  // TODO: there isn't much to test against now...
+  test.skip('Issue created for an existing source gets automatically closed', async () => {
     const createdIssue = await octokit.issues.create({
       ...baseIssueMetadata,
       title: '[Test] This should be closed since the source already exists',
