@@ -10,7 +10,7 @@ describe('Existing source check', () => {
     const createdIssue = await octokit.issues.create({
       ...baseIssueMetadata,
       title: '[Test] This should be closed since the source already exists',
-      body: 'Please add https://mangadex.org/!',
+      body: 'Please add http://127.0.0.1:3000!',
       labels: ['enhancement', 'test'],
     });
 

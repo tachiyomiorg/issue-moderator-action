@@ -6,10 +6,10 @@ describe('urlsFromIssueBody', () => {
   it('extracts URLs', () => {
     (
       [
-        ['foo https://mangadex.org bar', ['mangadex.org']],
+        ['foo https://example.org bar', ['example.org']],
         [
-          'foo https://MANGADEX.ORG google.co.UK bar',
-          ['mangadex.org', 'google.co.uk'],
+          'foo https://example.ORG google.co.UK bar',
+          ['example.org', 'google.co.uk'],
         ],
         [
           'foo http://stupidlylongtld.NORTHWESTERNMUTUAL',
