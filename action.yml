@@ -74,7 +74,7 @@ inputs:
     description: >
       The URL of the JSON extensions repository.
       Required if `existing-check-enabled` is enabled.
-    default: https://raw.githubusercontent.com/tachiyomiorg/tachiyomi-extensions/repo/index.min.json
+    default: https://raw.githubusercontent.com/tachiyomiorg/extensions/repo/index.min.json
   existing-check-comment:
     required: false
     description: >

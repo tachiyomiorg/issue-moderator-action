@@ -51,7 +51,7 @@ describe('urlsFromIssueBody', () => {
         ['foo user-images.githubusercontent.com/something bar', []],
         ['foo www.gist.github.com/something bar', []],
         [
-          'foo https://github.com/tachiyomiorg/tachiyomi-extensions/blob/master/REMOVED_SOURCES.md something',
+          'foo https://github.com/tachiyomiorg/extensions/blob/master/README.md something',
           [],
         ],
       ] as const
