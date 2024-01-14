@@ -74,18 +74,16 @@ export async function checkForCommand() {
     core.getInput('repo-token', { required: true }),
   );
 
-  // Get all the members from the organization.
-  const allowedMembers = await client.rest.orgs.listMembers({
-    org: repo.owner,
-  });
-  if (allowedMembers.status !== 200) {
-    core.info('Failed to fetch the members from the organization');
-    return;
-  }
-  if (
-    !allowedMembers.data.find((member) => member.login === commentUser.login)
-  ) {
-    core.info('The comment author is not a organization member');
+  try {
+    const memberToken = core.getInput('member-token');
+    const memberClient = memberToken ? github.getOctokit(memberToken) : client;
+
+    await memberClient.rest.orgs.checkMembershipForUser({
+      org: repo.owner,
+      username: commentUser.login,
+    });
+  } catch (_) {
+    core.info('Could not verify the membership of the comment author');
     return;
   }
 
