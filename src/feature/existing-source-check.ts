@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Issue, IssuesEvent } from '@octokit/webhooks-definitions/schema';
+import { Issue, IssuesEvent } from '@octokit/webhooks-types/schema';
 import axios from 'axios';
 
 import { addDuplicateLabel, shouldIgnore } from '../util/issues';

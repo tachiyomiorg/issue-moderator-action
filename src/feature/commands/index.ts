@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { IssueCommentEvent } from '@octokit/webhooks-definitions/schema';
+import { IssueCommentEvent } from '@octokit/webhooks-types/schema';
 
 import { GitHubClient } from '../../types';
 import { minimizeComment } from '../../util/comments';

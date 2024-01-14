@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { IssuesEvent } from '@octokit/webhooks-definitions/schema';
+import { IssuesEvent } from '@octokit/webhooks-types/schema';
 
 import { addLabels, shouldIgnore } from '../util/issues';
 import { evaluateRules, Rule } from '../util/rules';
