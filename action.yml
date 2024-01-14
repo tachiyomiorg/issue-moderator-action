@@ -11,6 +11,9 @@ inputs:
   repo-token:
     required: true
     description: GitHub token
+  member-token:
+    required: false
+    description: Token with read access to organization members
   duplicate-label:
     required: false
     description: Label to add on duplicate command and auto duplicate check

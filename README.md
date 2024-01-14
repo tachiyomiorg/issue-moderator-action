@@ -42,7 +42,10 @@ jobs:
 | Name              | Description                                                |
 | ----------------- | ---------------------------------------------------------- |
 | `repo-token`      | GitHub access token                                        |
+| `member-token`    | Token with read access to organization members             |
 | `duplicate-label` | Label to add on duplicate command and auto duplicate check |
+
+If `member-token` is not provided, `repo-token` will be used to check user's membership. In this case, the action might fail to verify private members.
 
 ### Auto closers
 
