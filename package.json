@@ -26,9 +26,9 @@
     "@tsconfig/node20": "20.1.2",
     "@types/dedent": "0.7.2",
     "@types/node": "20.11.0",
-    "esbuild": "0.19.11",
-    "prettier": "3.2.2",
+    "esbuild": "0.19.12",
+    "prettier": "3.2.4",
     "typescript": "5.3.3",
-    "vitest": "1.2.0"
+    "vitest": "1.2.1"
   }
 }
