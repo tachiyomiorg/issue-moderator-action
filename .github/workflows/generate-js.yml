@@ -35,7 +35,7 @@ jobs:
           fi
 
       - name: Create pull request with generated JavaScript
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           add-paths: dist/
           commit-message: Generate JavaScript based on ${{ github.sha }}
