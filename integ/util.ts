@@ -33,14 +33,11 @@ export async function deleteIssue(client: GitHubClient, issueId: string) {
     await client.graphql(
       `
         mutation {
-          deleteIssue(input: {issueId: $issueId, clientMutationId: "Delete test issue"}) {
+          deleteIssue(input: {issueId: "${issueId}", clientMutationId: "Delete test issue"}) {
             clientMutationId
           }
         }
       `,
-      {
-        issueId,
-      },
     );
   } catch (error: any) {
     console.log(`Failed to delete issue: ${error.message}`);
