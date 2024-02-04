@@ -45,23 +45,4 @@ describe('Duplicate URL check', () => {
 
     await deleteIssue(octokit, issue.data.node_id);
   });
-
-  test('Delete old test issues', async () => {
-    const allClosedIssues = await octokit.paginate(
-      octokit.rest.issues.listForRepo,
-      {
-        owner: 'tachiyomiorg',
-        repo: 'issue-moderator-action',
-        state: 'closed',
-        labels: 'test',
-        per_page: 500,
-      },
-    );
-
-    const issueIds = allClosedIssues
-      .filter((currIssue) => currIssue.title.startsWith('[Test]'))
-      .map((currIssue) => currIssue.node_id);
-
-    await Promise.all(issueIds.map((id) => deleteIssue(octokit, id)));
-  });
 });
