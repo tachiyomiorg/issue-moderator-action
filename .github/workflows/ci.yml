@@ -14,8 +14,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      self_mutation_happened: ${{ steps.self_mutation.outputs.self_mutation_happened }}
 
     steps:
       - uses: actions/checkout@v4

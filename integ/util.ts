@@ -1,5 +1,7 @@
 import { Octokit } from '@octokit/action';
 
+import { GitHubClient } from '../src/types';
+
 export const baseIssueMetadata = {
   owner: 'tachiyomiorg',
   repo: 'issue-moderator-action',
@@ -24,4 +26,23 @@ export async function waitForClosedIssue(
     });
   }
   return issue;
+}
+
+export async function deleteIssue(client: GitHubClient, issueId: string) {
+  try {
+    await client.graphql(
+      `
+        mutation {
+          deleteIssue(input: {issueId: $issueId, clientMutationId: "Delete test issue"}) {
+            clientMutationId
+          }
+        }
+      `,
+      {
+        issueId,
+      },
+    );
+  } catch (error: any) {
+    console.log(`Failed to delete issue: ${error.message}`);
+  }
 }

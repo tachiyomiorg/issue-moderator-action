@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/action';
 import { beforeAll, describe, expect, test } from 'vitest';
 
-import { baseIssueMetadata, waitForClosedIssue } from './util';
+import { baseIssueMetadata, deleteIssue, waitForClosedIssue } from './util';
 
 const octokit = new Octokit();
 
@@ -23,6 +23,8 @@ describe('Duplicate URL check', () => {
         issue_number: createdIssue.data.number,
         state: 'closed',
       });
+
+      await deleteIssue(octokit, createdIssue.data.node_id);
     };
   });
 
@@ -39,5 +41,7 @@ describe('Duplicate URL check', () => {
     expect(issue.data.state).toStrictEqual('closed');
     expect(issue.data.state_reason).toStrictEqual('not_planned');
     expect(issue.data.labels.map((l: any) => l.name)).toContain('duplicate');
+
+    await deleteIssue(octokit, issue.data.node_id);
   });
 });
