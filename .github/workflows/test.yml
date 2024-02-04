@@ -20,6 +20,7 @@ jobs:
         uses: ./
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          member-token: ${{ secrets.MEMBER_TOKEN }}
           duplicate-label: duplicate
           duplicate-check-enabled: true
           duplicate-check-labels: |
