@@ -27,19 +27,3 @@ export async function waitForClosedIssue(
   }
   return issue;
 }
-
-export async function deleteIssue(client: GitHubClient, issueId: string) {
-  try {
-    await client.graphql(
-      `
-        mutation {
-          deleteIssue(input: {issueId: "${issueId}", clientMutationId: "Delete test issue"}) {
-            clientMutationId
-          }
-        }
-      `,
-    );
-  } catch (error: any) {
-    console.log(`Failed to delete issue: ${error.message}`);
-  }
-}

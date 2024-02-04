@@ -22,6 +22,10 @@ inputs:
     required: false
     default: Blurb
     description: Command to close an issue with a blurb posted as a comment
+  delete-command:
+    required: false
+    default: Delete this issue
+    description: Command to delete an issue
   edit-title-command:
     required: false
     default: Edit title to

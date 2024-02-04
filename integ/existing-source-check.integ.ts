@@ -1,7 +1,8 @@
 import { Octokit } from '@octokit/action';
 import { describe, expect, test } from 'vitest';
 
-import { baseIssueMetadata, deleteIssue, waitForClosedIssue } from './util';
+import { baseIssueMetadata, waitForClosedIssue } from './util';
+import { deleteIssue } from '../src/util/issues';
 
 const octokit = new Octokit();
 

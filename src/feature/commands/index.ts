@@ -5,10 +5,11 @@ import { IssueCommentEvent } from '@octokit/webhooks-types/schema';
 import { GitHubClient } from '../../types';
 import { minimizeComment } from '../../util/comments';
 
+import { handleBlurb } from './blurbs';
 import { closeDuplicateIssue } from './close-duplicate-issue';
+import { deleteIssue } from './delete-issue';
 import { editIssueTitle } from './edit-issue-title';
 import { lockIssue } from './lock-issue';
-import { handleBlurb } from './blurbs';
 
 type CommandFn = (client: GitHubClient, commentBody: string) => Promise<void>;
 interface Command {
@@ -23,6 +24,10 @@ const COMMANDS: Record<string, Command> = {
   blurb: {
     minimizeComment: true,
     fn: handleBlurb,
+  },
+  delete: {
+    minimizeComment: false,
+    fn: deleteIssue,
   },
   duplicate: {
     minimizeComment: false,

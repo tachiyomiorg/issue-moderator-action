@@ -54,3 +54,19 @@ export async function addLabels(
   });
   core.info(`Added labels: ${labels}`);
 }
+
+export async function deleteIssue(client: GitHubClient, issueId: string) {
+  try {
+    await client.graphql(
+      `
+        mutation {
+          deleteIssue(input: {issueId: "${issueId}", clientMutationId: "Delete test issue"}) {
+            clientMutationId
+          }
+        }
+      `,
+    );
+  } catch (error: any) {
+    core.warning(`Failed to delete issue: ${error.message}`);
+  }
+}

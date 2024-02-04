@@ -63,12 +63,13 @@ If `member-token` is not provided, `repo-token` will be used to check user's mem
 
 ### Commands
 
-| Name                 | Description                             | Default value   |
-| -------------------- | --------------------------------------- | --------------- |
-| `blurb-command`      | Optional blurb command text.            | Blurb           |
-| `duplicate-command`  | Optional duplicate command text.        | Duplicate of #  |
-| `edit-title-command` | Optional edit issue title command text. | Edit title to   |
-| `lock-command`       | Optional lock command text.             | Lock this issue |
+| Name                 | Description                             | Default value     |
+| -------------------- | --------------------------------------- | ----------------- |
+| `blurb-command`      | Optional blurb command text.            | Blurb             |
+| `delete-command`     | Optional delete command text.           | Delete this issue |
+| `duplicate-command`  | Optional duplicate command text.        | Duplicate of #    |
+| `edit-title-command` | Optional edit issue title command text. | Edit title to     |
+| `lock-command`       | Optional lock command text.             | Lock this issue   |
 
 ---
 
