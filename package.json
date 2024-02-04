@@ -27,7 +27,7 @@
     "@types/dedent": "0.7.2",
     "@types/node": "20.11.0",
     "esbuild": "0.20.0",
-    "prettier": "3.2.4",
+    "prettier": "3.2.5",
     "typescript": "5.3.3",
     "vitest": "1.2.2"
   }
