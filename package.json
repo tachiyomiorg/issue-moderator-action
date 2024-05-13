@@ -22,7 +22,7 @@
     "axios": "1.6.8"
   },
   "devDependencies": {
-    "@octokit/action": "6.1.0",
+    "@octokit/action": "7.0.0",
     "@tsconfig/node20": "20.1.4",
     "@types/dedent": "0.7.2",
     "@types/node": "20.11.16",
